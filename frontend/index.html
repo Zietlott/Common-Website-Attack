@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta
+      name="description"
+      content="Tìm hiểu các lỗ hổng bảo mật web phổ biến và cách phòng chống."
+    />
+
+    <title>Web Security Lab</title>
+
+    <!-- CSS dùng chung -->
+    <link rel="stylesheet" href="src/css/global.css" />
+    <link rel="stylesheet" href="src/css/components.css" />
+
+    <!-- CSS riêng cho trang chủ -->
+    <link rel="stylesheet" href="src/css/home.css" />
+  </head>
+
+  <body data-page="home" data-title="Tổng quan">
+    <div class="app">
+      <!-- Sidebar -->
+      <div id="sidebar-container"></div>
+
+      <main class="main-content">
+        <!-- Header -->
+        <div id="header-container"></div>
+
+        <!-- ==============================
+             HOME CONTENT
+        =============================== -->
+
+        <section class="content">
+          <!-- HERO -->
+          <section class="hero">
+            <div class="hero-text">
+              <span class="eyebrow">LEARN • EXPLORE • PROTECT</span>
+
+              <h1>
+                Khám phá bảo mật
+                <br />
+                ứng dụng web
+              </h1>
+
+              <p>
+                Tìm hiểu các lỗ hổng bảo mật phổ biến, cách chúng hoạt động và
+                phương pháp phòng chống thông qua các mô phỏng tương tác.
+              </p>
+
+              <a href="src/pages/xss.html" class="primary-btn">
+                Bắt đầu khám phá →
+              </a>
+            </div>
+
+            <div class="hero-visual">
+              <div class="shield">♢</div>
+
+              <div class="hero-caption">
+                <span class="status-dot"></span>
+                <span>Safe Learning Environment</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- LABS -->
+          <section class="labs-section">
+            <div class="section-heading">
+              <div>
+                <h2>Phòng thí nghiệm</h2>
+                <p>Khám phá các dạng tấn công web phổ biến.</p>
+              </div>
+
+              <span class="lab-count">04 LABS</span>
+            </div>
+
+            <div class="lab-grid">
+              <!-- XSS -->
+              <a href="src/pages/xss.html" class="lab-card">
+                <div class="lab-icon xss-icon">&lt;/&gt;</div>
+
+                <span class="lab-tag">CLIENT-SIDE</span>
+
+                <h3>Cross-Site Scripting</h3>
+
+                <p>
+                  Tìm hiểu rủi ro khi dữ liệu đầu vào không được xử lý an toàn.
+                </p>
+
+                <span class="card-link">Khám phá →</span>
+              </a>
+
+              <!-- SQL INJECTION -->
+              <a href="src/pages/sql-injection.html" class="lab-card">
+                <div class="lab-icon sql-icon">⌘</div>
+
+                <span class="lab-tag">DATABASE</span>
+
+                <h3>SQL Injection</h3>
+
+                <p>
+                  Tìm hiểu rủi ro khi ứng dụng xây dựng truy vấn cơ sở dữ liệu
+                  không an toàn.
+                </p>
+
+                <span class="card-link">Khám phá →</span>
+              </a>
+
+              <!-- CSRF -->
+              <a href="src/pages/csrf.html" class="lab-card">
+                <div class="lab-icon csrf-icon">⛨</div>
+
+                <span class="lab-tag">REQUEST</span>
+
+                <h3>Cross-Site Request Forgery</h3>
+
+                <p>
+                  Tìm hiểu nguy cơ từ các yêu cầu không được xác thực đúng cách.
+                </p>
+
+                <span class="card-link">Khám phá →</span>
+              </a>
+
+              <!-- PHISHING -->
+              <a href="src/pages/phising.html" class="lab-card">
+                <div class="lab-icon phishing-icon">✉</div>
+
+                <span class="lab-tag">SOCIAL ENGINEERING</span>
+
+                <h3>Phishing</h3>
+
+                <p>Học cách nhận diện website và thông điệp giả mạo.</p>
+
+                <span class="card-link">Khám phá →</span>
+              </a>
+            </div>
+          </section>
+
+          <!-- SECURITY GUIDE -->
+          <section class="guide-banner">
+            <div>
+              <span class="guide-label">SECURITY KNOWLEDGE</span>
+
+              <h2>Bảo vệ ứng dụng web từ những điều cơ bản</h2>
+
+              <p>Tổng hợp các nguyên tắc và biện pháp bảo mật cần thiết.</p>
+            </div>
+
+            <a href="src/pages/security-guide.html" class="secondary-btn">
+              Xem hướng dẫn →
+            </a>
+          </section>
+        </section>
+
+        <!-- Footer -->
+        <div id="footer-container"></div>
+      </main>
+    </div>
+
+    <!-- Component loader -->
+    <script src="src/js/components.js"></script>
+  </body>
+</html>

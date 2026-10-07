@@ -1,0 +1,225 @@
+/* =========================================================
+   SQL INJECTION LAB
+   ========================================================= */
+
+.sql-content {
+  max-width: 1200px;
+}
+
+/* ---------------------------------------------------------
+   Information box
+   --------------------------------------------------------- */
+
+.sql-info {
+  margin-top: 20px;
+  padding: 14px 16px;
+
+  border: 1px solid #bfdbfe;
+  border-radius: var(--radius-md);
+
+  background: #eff6ff;
+  color: #334155;
+
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.sql-info strong {
+  color: #1e40af;
+}
+
+/* ---------------------------------------------------------
+   Query comparison
+   --------------------------------------------------------- */
+
+.sql-comparison {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.query-example {
+  padding: 18px;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+
+  background: #fff;
+}
+
+.query-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin-bottom: 10px;
+}
+
+.query-header h3 {
+  margin: 0;
+
+  color: var(--text-main);
+  font-size: 1rem;
+}
+
+.query-example p {
+  line-height: 1.7;
+}
+
+.query-badge {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 4px 9px;
+
+  border-radius: 999px;
+
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.query-badge.unsafe {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.query-badge.safe {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.unsafe-example {
+  border-color: #fecaca;
+}
+
+.safe-example {
+  border-color: #bbf7d0;
+}
+
+.query-example pre {
+  margin: 14px 0 0;
+
+  padding: 14px;
+
+  overflow-x: auto;
+
+  border-radius: var(--radius-md);
+
+  background: #0f172a;
+  color: #e2e8f0;
+
+  font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.query-example code {
+  font-family: inherit;
+}
+
+/* ---------------------------------------------------------
+   Quiz
+   --------------------------------------------------------- */
+
+.sql-quiz {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.sql-quiz .lab-heading {
+  margin-bottom: 0;
+}
+
+.sql-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sql-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+
+  padding: 13px 14px;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+
+  background: #fff;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.sql-option:hover {
+  border-color: #93c5fd;
+  background: #f8fbff;
+}
+
+.sql-option input {
+  margin-top: 3px;
+
+  flex-shrink: 0;
+
+  accent-color: var(--primary);
+}
+
+.sql-option span {
+  color: var(--text-main);
+
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+/* ---------------------------------------------------------
+   Result
+   --------------------------------------------------------- */
+
+.sql-result {
+  margin-top: 0;
+
+  line-height: 1.6;
+}
+
+.sql-result.is-correct {
+  border-color: #86efac;
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.sql-result.is-wrong {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.sql-result.is-empty {
+  border-color: #fde68a;
+  background: #fffbeb;
+  color: #92400e;
+}
+
+/* ---------------------------------------------------------
+   Responsive
+   --------------------------------------------------------- */
+
+@media (max-width: 600px) {
+  .query-example {
+    padding: 15px;
+  }
+
+  .query-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .query-example pre {
+    font-size: 0.78rem;
+  }
+}

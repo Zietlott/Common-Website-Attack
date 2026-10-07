@@ -1,0 +1,206 @@
+/* =========================================================
+   CSRF LAB
+   ========================================================= */
+
+.csrf-content {
+  max-width: 1200px;
+}
+
+/* ---------------------------------------------------------
+   CSRF flow
+   --------------------------------------------------------- */
+
+.csrf-flow {
+  margin: 0;
+}
+
+.csrf-flow li {
+  margin-bottom: 6px;
+}
+
+.csrf-flow li:last-child {
+  margin-bottom: 0;
+}
+
+.csrf-flow strong {
+  color: var(--text-main);
+}
+
+/* ---------------------------------------------------------
+   Information box
+   --------------------------------------------------------- */
+
+.csrf-info {
+  margin-top: 20px;
+  padding: 14px 16px;
+
+  border: 1px solid #bfdbfe;
+  border-radius: var(--radius-md);
+
+  background: #eff6ff;
+
+  color: #334155;
+
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.csrf-info strong {
+  color: #1e40af;
+}
+
+/* ---------------------------------------------------------
+   Simulation
+   --------------------------------------------------------- */
+
+.csrf-simulation {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.csrf-simulation .lab-heading {
+  margin-bottom: 0;
+}
+
+.csrf-simulation .lab-heading h2 {
+  margin-top: 0;
+}
+
+/* ---------------------------------------------------------
+   Request cards
+   --------------------------------------------------------- */
+
+.csrf-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.csrf-card {
+  position: relative;
+
+  display: flex;
+  gap: 14px;
+
+  margin-top: 0 !important;
+  padding: 20px !important;
+}
+
+.csrf-card-number {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 9px;
+
+  background: var(--primary-light);
+  color: var(--primary);
+
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.csrf-card-content {
+  min-width: 0;
+}
+
+.csrf-card h3 {
+  margin-bottom: 8px;
+}
+
+.csrf-card p {
+  margin-bottom: 16px;
+}
+
+/* ---------------------------------------------------------
+   Buttons
+   --------------------------------------------------------- */
+
+.csrf-analyze-btn {
+  margin-top: 2px;
+}
+
+/* ---------------------------------------------------------
+   Result
+   --------------------------------------------------------- */
+
+.csrf-result {
+  margin-top: 0;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.csrf-result.is-warning {
+  border-color: #fcd34d;
+  background: #fffbeb;
+  color: #92400e;
+}
+
+.csrf-result.is-safe {
+  border-color: #86efac;
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.csrf-result-title {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: var(--text-main);
+
+  font-weight: 700;
+}
+
+.csrf-result-text {
+  display: block;
+
+  color: inherit;
+
+  line-height: 1.7;
+}
+
+/* ---------------------------------------------------------
+   Protection list
+   --------------------------------------------------------- */
+
+.protection-list li {
+  margin-bottom: 5px;
+}
+
+.protection-list li:last-child {
+  margin-bottom: 0;
+}
+
+/* ---------------------------------------------------------
+   Responsive
+   --------------------------------------------------------- */
+
+@media (max-width: 800px) {
+  .csrf-options {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .csrf-card {
+    padding: 17px !important;
+  }
+
+  .csrf-card {
+    flex-direction: column;
+  }
+
+  .csrf-card-number {
+    width: 32px;
+    height: 32px;
+  }
+}

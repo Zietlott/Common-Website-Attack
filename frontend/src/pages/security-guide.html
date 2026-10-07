@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Security Guide | Web Security Lab</title>
+
+    <link rel="stylesheet" href="../css/global.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="../css/security-guide.css" />
+  </head>
+
+  <body data-page="security-guide" data-title="Hướng dẫn bảo mật">
+    <div class="app">
+      <!-- Sidebar -->
+      <div id="sidebar-container"></div>
+
+      <main class="main-content">
+        <!-- Header -->
+        <div id="header-container"></div>
+
+        <section class="content security-guide-content">
+          <!-- Page heading -->
+          <div class="page-heading">
+            <span class="eyebrow-blue">SECURITY KNOWLEDGE</span>
+
+            <h1>Hướng dẫn bảo mật web</h1>
+
+            <p>
+              Những nguyên tắc cơ bản giúp xây dựng và sử dụng ứng dụng web an
+              toàn hơn.
+            </p>
+          </div>
+
+          <!-- Section 1 -->
+          <section class="lab-panel guide-section">
+            <div class="guide-number">01</div>
+
+            <div class="guide-content">
+              <h2>Xử lý dữ liệu đầu vào và đầu ra</h2>
+
+              <ul>
+                <li>Kiểm tra dữ liệu theo định dạng và giới hạn mong đợi.</li>
+
+                <li>Mã hóa đầu ra phù hợp với ngữ cảnh hiển thị.</li>
+
+                <li>Không mặc định dữ liệu từ người dùng là đáng tin cậy.</li>
+
+                <li>
+                  Tránh đưa dữ liệu không đáng tin cậy trực tiếp vào HTML hoặc
+                  SQL.
+                </li>
+              </ul>
+            </div>
+          </section>
+
+          <!-- Section 2 -->
+          <section class="lab-panel guide-section">
+            <div class="guide-number">02</div>
+
+            <div class="guide-content">
+              <h2>Xác thực và phân quyền</h2>
+
+              <ul>
+                <li>Sử dụng cơ chế xác thực phù hợp với ứng dụng.</li>
+
+                <li>Kiểm tra quyền truy cập ở phía máy chủ.</li>
+
+                <li>Áp dụng nguyên tắc đặc quyền tối thiểu.</li>
+
+                <li>Không lưu mật khẩu dưới dạng văn bản thuần.</li>
+              </ul>
+            </div>
+          </section>
+
+          <!-- Section 3 -->
+          <section class="lab-panel guide-section">
+            <div class="guide-number">03</div>
+
+            <div class="guide-content">
+              <h2>Quản lý phiên và yêu cầu</h2>
+
+              <ul>
+                <li>
+                  Cấu hình cookie bảo mật phù hợp, gồm HttpOnly, Secure và
+                  SameSite.
+                </li>
+
+                <li>Bảo vệ các thao tác làm thay đổi dữ liệu khỏi CSRF.</li>
+
+                <li>Hết hạn và vô hiệu hóa phiên khi cần thiết.</li>
+              </ul>
+            </div>
+          </section>
+
+          <!-- Section 4 -->
+          <section class="lab-panel guide-section">
+            <div class="guide-number">04</div>
+
+            <div class="guide-content">
+              <h2>Xử lý lỗi và cấu hình</h2>
+
+              <ul>
+                <li>Không hiển thị thông tin nhạy cảm trong thông báo lỗi.</li>
+
+                <li>
+                  Không đưa khóa bí mật hoặc mật khẩu vào mã nguồn công khai.
+                </li>
+
+                <li>Cập nhật thư viện và các thành phần phụ thuộc.</li>
+
+                <li>
+                  Ghi log phù hợp và tránh lưu dữ liệu nhạy cảm không cần thiết.
+                </li>
+              </ul>
+            </div>
+          </section>
+
+          <!-- Checklist -->
+          <section class="lab-panel checklist-panel">
+            <div class="checklist-heading">
+              <div>
+                <span class="checklist-label">SELF CHECK</span>
+
+                <h2>Checklist tự kiểm tra</h2>
+
+                <p>Đánh dấu những nội dung bạn đã hiểu hoặc đã kiểm tra.</p>
+              </div>
+
+              <div
+                id="checklistProgress"
+                class="checklist-progress"
+                aria-live="polite"
+              >
+                0/4
+              </div>
+            </div>
+
+            <div class="checklist">
+              <label class="checklist-item">
+                <input type="checkbox" class="security-check" />
+
+                <span>
+                  Tôi hiểu vì sao cần dùng truy vấn SQL tham số hóa.
+                </span>
+              </label>
+
+              <label class="checklist-item">
+                <input type="checkbox" class="security-check" />
+
+                <span>
+                  Tôi biết vì sao không nên đưa dữ liệu không tin cậy vào HTML
+                  trực tiếp.
+                </span>
+              </label>
+
+              <label class="checklist-item">
+                <input type="checkbox" class="security-check" />
+
+                <span>
+                  Tôi hiểu mục đích của CSRF token và thuộc tính cookie
+                  SameSite.
+                </span>
+              </label>
+
+              <label class="checklist-item">
+                <input type="checkbox" class="security-check" />
+
+                <span>
+                  Tôi có thể nhận diện một số dấu hiệu phổ biến của phishing.
+                </span>
+              </label>
+            </div>
+
+            <div
+              id="checklistMessage"
+              class="checklist-message"
+              aria-live="polite"
+            >
+              Hãy hoàn thành checklist để kiểm tra tiến độ.
+            </div>
+
+            <button type="button" id="resetChecklistBtn" class="secondary-btn">
+              Đặt lại checklist
+            </button>
+          </section>
+        </section>
+
+        <!-- Footer -->
+        <div id="footer-container"></div>
+      </main>
+    </div>
+
+    <script src="../js/components.js"></script>
+    <script src="../js/security-guide.js"></script>
+  </body>
+</html>

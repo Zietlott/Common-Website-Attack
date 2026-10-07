@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>CSRF Lab | Web Security Lab</title>
+
+    <link rel="stylesheet" href="../css/global.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="../css/csrf.css" />
+  </head>
+
+  <body data-page="csrf" data-title="CSRF Lab">
+    <div class="app">
+      <!-- Sidebar -->
+      <div id="sidebar-container"></div>
+
+      <main class="main-content">
+        <!-- Header -->
+        <div id="header-container"></div>
+
+        <section class="content csrf-content">
+          <!-- Page heading -->
+          <div class="page-heading">
+            <span class="eyebrow-blue">WEB SECURITY / LAB 02</span>
+
+            <h1>Cross-Site Request Forgery (CSRF)</h1>
+
+            <p>
+              Tìm hiểu cách một website có thể bị lợi dụng để gửi yêu cầu ngoài
+              ý muốn bằng phiên đăng nhập của người dùng.
+            </p>
+          </div>
+
+          <!-- Concept -->
+          <section class="lab-panel">
+            <h2>CSRF hoạt động như thế nào?</h2>
+
+            <ol class="csrf-flow">
+              <li>
+                <strong>Người dùng đăng nhập:</strong>
+                người dùng đăng nhập vào một website.
+              </li>
+
+              <li>
+                <strong>Phiên đăng nhập được duy trì:</strong>
+                trình duyệt lưu thông tin cần thiết để duy trì phiên.
+              </li>
+
+              <li>
+                <strong>Truy cập trang khác:</strong>
+                người dùng truy cập một trang không đáng tin cậy.
+              </li>
+
+              <li>
+                <strong>Yêu cầu ngoài ý muốn:</strong>
+                nếu ứng dụng thiếu biện pháp bảo vệ, trình duyệt có thể gửi yêu
+                cầu đến website đang đăng nhập.
+              </li>
+            </ol>
+
+            <div class="csrf-info">
+              <strong>Lưu ý:</strong>
+              Đây là mô tả khái niệm, không phải một cuộc tấn công thực tế.
+              Trình duyệt và ứng dụng có nhiều cơ chế có thể ngăn chặn tình
+              huống này.
+            </div>
+          </section>
+
+          <!-- Simulation -->
+          <section class="lab-panel csrf-simulation">
+            <div class="lab-heading">
+              <h2>Mô phỏng nhận diện yêu cầu</h2>
+
+              <p>
+                Hãy chọn yêu cầu nào có dấu hiệu cần được bảo vệ bằng CSRF token
+                hoặc cơ chế xác thực tương đương.
+              </p>
+            </div>
+
+            <div class="csrf-options">
+              <!-- Request A -->
+              <article class="lab-card csrf-card">
+                <div class="csrf-card-number">A</div>
+
+                <div class="csrf-card-content">
+                  <h3>Xem thông tin công khai</h3>
+
+                  <p>Đọc một trang giới thiệu không làm thay đổi dữ liệu.</p>
+
+                  <button
+                    type="button"
+                    class="primary-btn csrf-analyze-btn"
+                    data-request="A"
+                  >
+                    Phân tích yêu cầu A
+                  </button>
+                </div>
+              </article>
+
+              <!-- Request B -->
+              <article class="lab-card csrf-card">
+                <div class="csrf-card-number">B</div>
+
+                <div class="csrf-card-content">
+                  <h3>Thay đổi thông tin tài khoản</h3>
+
+                  <p>
+                    Gửi yêu cầu cập nhật một thiết lập quan trọng của tài khoản.
+                  </p>
+
+                  <button
+                    type="button"
+                    class="primary-btn csrf-analyze-btn"
+                    data-request="B"
+                  >
+                    Phân tích yêu cầu B
+                  </button>
+                </div>
+              </article>
+            </div>
+
+            <!-- Result -->
+            <div
+              id="csrfResult"
+              class="output-box csrf-result"
+              aria-live="polite"
+            >
+              Chọn một yêu cầu để xem phân tích.
+            </div>
+          </section>
+
+          <!-- Protection -->
+          <section class="lab-panel">
+            <h2>Biện pháp phòng chống</h2>
+
+            <ul class="protection-list">
+              <li>Sử dụng CSRF token được xác minh ở phía máy chủ.</li>
+
+              <li>Cấu hình cookie với thuộc tính SameSite phù hợp.</li>
+
+              <li>Kiểm tra Origin hoặc Referer khi thích hợp.</li>
+
+              <li>Không sử dụng yêu cầu GET để thay đổi dữ liệu.</li>
+
+              <li>Yêu cầu xác nhận bổ sung đối với hành động nhạy cảm.</li>
+            </ul>
+          </section>
+        </section>
+
+        <!-- Footer -->
+        <div id="footer-container"></div>
+      </main>
+    </div>
+
+    <script src="../js/components.js"></script>
+    <script src="../js/csrf.js"></script>
+  </body>
+</html>

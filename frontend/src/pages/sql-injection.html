@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>SQL Injection Lab | Web Security Lab</title>
+
+    <link rel="stylesheet" href="../css/global.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="../css/sql-injection.css" />
+  </head>
+
+  <body data-page="sql-injection" data-title="SQL Injection Lab">
+    <div class="app">
+      <!-- Sidebar -->
+      <div id="sidebar-container"></div>
+
+      <main class="main-content">
+        <!-- Header -->
+        <div id="header-container"></div>
+
+        <section class="content sql-content">
+          <!-- Page heading -->
+          <div class="page-heading">
+            <span class="eyebrow-blue">WEB SECURITY / LAB 03</span>
+
+            <h1>SQL Injection</h1>
+
+            <p>
+              Tìm hiểu rủi ro khi dữ liệu đầu vào được kết hợp trực tiếp vào câu
+              truy vấn SQL và cách xây dựng truy vấn an toàn.
+            </p>
+          </div>
+
+          <!-- Concept -->
+          <section class="lab-panel">
+            <h2>SQL Injection là gì?</h2>
+
+            <p>
+              SQL Injection là lỗ hổng xảy ra khi dữ liệu đầu vào có thể làm
+              thay đổi cấu trúc câu truy vấn cơ sở dữ liệu ngoài dự kiến. Hậu
+              quả phụ thuộc vào quyền của tài khoản cơ sở dữ liệu và cách ứng
+              dụng xử lý truy vấn.
+            </p>
+
+            <div class="sql-info">
+              <strong>Điểm cần nhớ:</strong>
+              dữ liệu người dùng không nên được xem như một phần của cấu trúc
+              câu lệnh SQL.
+            </div>
+          </section>
+
+          <!-- Query comparison -->
+          <section class="lab-panel sql-comparison">
+            <h2>So sánh hai cách xây dựng truy vấn</h2>
+
+            <div class="query-example unsafe-example">
+              <div class="query-header">
+                <span class="query-badge unsafe">Không an toàn</span>
+
+                <h3>Ghép chuỗi trực tiếp</h3>
+              </div>
+
+              <p>
+                Ghép trực tiếp dữ liệu đầu vào của người dùng vào câu lệnh SQL
+                có thể khiến dữ liệu bị hiểu nhầm thành một phần của câu truy
+                vấn.
+              </p>
+
+              <pre><code>query = "SELECT * FROM users WHERE name = '" + userInput + "'";</code></pre>
+            </div>
+
+            <div class="query-example safe-example">
+              <div class="query-header">
+                <span class="query-badge safe">An toàn hơn</span>
+
+                <h3>Truy vấn tham số hóa</h3>
+              </div>
+
+              <p>
+                Sử dụng prepared statements hoặc truy vấn tham số hóa để tách dữ
+                liệu đầu vào khỏi cấu trúc câu lệnh SQL.
+              </p>
+
+              <pre><code>SELECT * FROM users WHERE name = ?;</code></pre>
+
+              <p>
+                Dấu <code>?</code> là vị trí tham số trong ví dụ khái niệm. Cú
+                pháp cụ thể phụ thuộc vào ngôn ngữ và thư viện cơ sở dữ liệu.
+              </p>
+            </div>
+          </section>
+
+          <!-- Knowledge check -->
+          <section class="lab-panel sql-quiz">
+            <div class="lab-heading">
+              <h2>Kiểm tra kiến thức</h2>
+
+              <p>Biện pháp nào nên được ưu tiên để ngăn SQL Injection?</p>
+            </div>
+
+            <div class="sql-options">
+              <label class="sql-option">
+                <input type="radio" name="sqlAnswer" value="a" />
+
+                <span> Ghép dữ liệu người dùng trực tiếp vào câu SQL. </span>
+              </label>
+
+              <label class="sql-option">
+                <input type="radio" name="sqlAnswer" value="b" />
+
+                <span>
+                  Dùng truy vấn tham số hóa và kiểm soát quyền cơ sở dữ liệu.
+                </span>
+              </label>
+
+              <label class="sql-option">
+                <input type="radio" name="sqlAnswer" value="c" />
+
+                <span> Chỉ ẩn thông báo lỗi trên giao diện. </span>
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" id="checkSqlBtn" class="primary-btn">
+                Kiểm tra đáp án
+              </button>
+
+              <button type="button" id="resetSqlBtn" class="secondary-btn">
+                Làm lại
+              </button>
+            </div>
+
+            <div
+              id="sqlResult"
+              class="output-box sql-result"
+              aria-live="polite"
+            >
+              Kết quả sẽ hiển thị tại đây.
+            </div>
+          </section>
+
+          <!-- Protection -->
+          <section class="lab-panel">
+            <h2>Biện pháp phòng chống</h2>
+
+            <ul class="protection-list">
+              <li>Ưu tiên prepared statements và truy vấn tham số hóa.</li>
+
+              <li>Kiểm tra dữ liệu đầu vào theo định dạng mong đợi.</li>
+
+              <li>
+                Áp dụng nguyên tắc đặc quyền tối thiểu cho tài khoản cơ sở dữ
+                liệu.
+              </li>
+
+              <li>Không để lộ thông tin lỗi nhạy cảm cho người dùng cuối.</li>
+            </ul>
+          </section>
+        </section>
+
+        <!-- Footer -->
+        <div id="footer-container"></div>
+      </main>
+    </div>
+
+    <script src="../js/components.js"></script>
+    <script src="../js/sql-injection.js"></script>
+  </body>
+</html>

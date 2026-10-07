@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta
+      name="description"
+      content="Phòng thực hành tìm hiểu Cross-Site Scripting và cách phòng chống."
+    />
+
+    <title>XSS Lab | Web Security Lab</title>
+
+    <link rel="stylesheet" href="../css/global.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="../css/xss.css" />
+  </head>
+
+  <body data-page="xss" data-title="XSS Lab">
+    <div class="app">
+      <!-- Sidebar -->
+      <div id="sidebar-container"></div>
+
+      <main class="main-content">
+        <!-- Header -->
+        <div id="header-container"></div>
+
+        <section class="content xss-content">
+          <!-- PAGE HEADING -->
+          <div class="page-heading">
+            <span class="eyebrow-blue"> WEB SECURITY / LAB 01 </span>
+
+            <h1>Cross-Site Scripting (XSS)</h1>
+
+            <p>
+              Tìm hiểu cách dữ liệu đầu vào không đáng tin cậy có thể tạo ra rủi
+              ro bảo mật và cách hiển thị dữ liệu an toàn.
+            </p>
+          </div>
+
+          <!-- INTRO -->
+          <section class="xss-intro">
+            <h2>XSS là gì?</h2>
+
+            <p>
+              Cross-Site Scripting (XSS) là lỗ hổng có thể xảy ra khi ứng dụng
+              đưa dữ liệu không đáng tin cậy vào trang web mà không xử lý phù
+              hợp. Trong trường hợp bị khai thác, trình duyệt có thể diễn giải
+              dữ liệu đó thành nội dung hoạt động.
+            </p>
+          </section>
+
+          <!-- INTERACTIVE LAB -->
+          <section class="xss-lab">
+            <div class="lab-heading">
+              <span class="eyebrow-blue"> INTERACTIVE DEMO </span>
+
+              <h2>Thử nghiệm xử lý dữ liệu đầu vào</h2>
+
+              <p>
+                Nhập một đoạn văn bản để so sánh cách hiển thị dữ liệu. Trang
+                này chỉ mô phỏng bằng văn bản và không thực thi mã nhập vào.
+              </p>
+            </div>
+
+            <!-- INPUT FORM -->
+            <form id="xssForm" class="lab-panel xss-form">
+              <div class="form-group">
+                <label for="userInput"> Dữ liệu đầu vào </label>
+
+                <textarea
+                  id="userInput"
+                  name="userInput"
+                  rows="5"
+                  placeholder="Nhập văn bản để thử nghiệm..."
+                  required
+                ></textarea>
+              </div>
+
+              <div
+                id="xssMessage"
+                class="xss-message"
+                aria-live="polite"
+                hidden
+              ></div>
+
+              <div class="form-actions">
+                <button type="submit" class="primary-btn">Chạy mô phỏng</button>
+
+                <button type="button" id="resetBtn" class="secondary-btn">
+                  Đặt lại
+                </button>
+              </div>
+            </form>
+
+            <!-- OUTPUT -->
+            <div class="lab-layout">
+              <!-- VULNERABLE SIMULATION -->
+              <section class="lab-panel">
+                <div class="result-heading">
+                  <span class="result-number"> 01 </span>
+
+                  <div>
+                    <h3>Ví dụ xử lý không an toàn</h3>
+
+                    <span class="result-label"> MÔ PHỎNG </span>
+                  </div>
+                </div>
+
+                <p>
+                  Nếu ứng dụng chèn trực tiếp dữ liệu không đáng tin cậy vào
+                  HTML, trình duyệt có thể diễn giải nội dung đó ngoài ý muốn.
+                </p>
+
+                <div
+                  id="vulnerableOutput"
+                  class="output-box"
+                  aria-live="polite"
+                >
+                  Chưa có dữ liệu mô phỏng.
+                </div>
+              </section>
+
+              <!-- SAFE SIMULATION -->
+              <section class="lab-panel">
+                <div class="result-heading">
+                  <span class="result-number safe"> 02 </span>
+
+                  <div>
+                    <h3>Cách hiển thị an toàn</h3>
+
+                    <span class="result-label safe-label"> KHUYẾN NGHỊ </span>
+                  </div>
+                </div>
+
+                <p>
+                  Dùng
+                  <code>textContent</code>
+                  để hiển thị dữ liệu dưới dạng văn bản thay vì diễn giải nó
+                  thành HTML.
+                </p>
+
+                <div id="safeOutput" class="output-box" aria-live="polite">
+                  Chưa có dữ liệu.
+                </div>
+              </section>
+            </div>
+          </section>
+
+          <!-- SECURITY NOTES -->
+          <section class="security-notes">
+            <h2>Cách phòng chống XSS</h2>
+
+            <ul>
+              <li>Mã hóa dữ liệu đầu ra phù hợp với ngữ cảnh hiển thị.</li>
+
+              <li>
+                Ưu tiên các API hiển thị văn bản như
+                <code>textContent</code>.
+              </li>
+
+              <li>
+                Tránh chèn dữ liệu không đáng tin cậy bằng
+                <code>innerHTML</code>.
+              </li>
+
+              <li>Kiểm tra và xử lý dữ liệu đầu vào ở phía máy chủ khi cần.</li>
+
+              <li>
+                Cân nhắc Content Security Policy (CSP) như một lớp phòng vệ bổ
+                sung.
+              </li>
+            </ul>
+          </section>
+        </section>
+
+        <!-- Footer -->
+        <div id="footer-container"></div>
+      </main>
+    </div>
+
+    <!-- Shared JS -->
+    <script src="../js/components.js"></script>
+
+    <!-- XSS JS -->
+    <script src="../js/xss.js"></script>
+  </body>
+</html>
