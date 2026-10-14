@@ -1,11 +1,12 @@
-USE common_website_attack;
 
-INSERT INTO users (username, password, email)
+-- Sample users for Security Lab
+INSERT OR IGNORE INTO users (id, username, password, email)
 VALUES
-('admin', 'admin123', 'admin@example.com'),
-('student', 'student123', 'student@example.com');
+(1, 'admin', 'admin123', 'admin@example.com'),
+(2, 'student', 'student123', 'student@example.com');
 
-INSERT INTO comments (user_id, content)
+-- Sample comments for XSS Lab
+INSERT OR IGNORE INTO comments (id, user_id, content)
 VALUES
-(1, 'Bình luận thử nghiệm của admin.'),
-(2, 'Bình luận thử nghiệm của student.');
+(1, 1, 'Bình luận thử nghiệm của admin.'),
+(2, 2, 'Bình luận thử nghiệm của student.');

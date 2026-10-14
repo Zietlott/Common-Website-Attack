@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <title>Stored XSS Browser Test</title>
+</head>
+<body>
+
+  <h1>Stored XSS Security Lab</h1>
+
+  <h2>Vulnerable Mode</h2>
+  <div id="vulnerable"></div>
+
+  <hr>
+
+  <h2>Secure Mode</h2>
+  <div id="secure"></div>
+
+  <script>
+    async function loadComments() {
+      const response = await fetch(
+        "http://localhost:3000/api/comments"
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch comments");
+      }
+
+      const result = await response.json();
+
+      const vulnerable =
+        document.getElementById("vulnerable");
+
+      const secure =
+        document.getElementById("secure");
+
+      vulnerable.replaceChildren();
+      secure.replaceChildren();
+
+      for (const comment of result.data) {
+        // Intentionally unsafe: local lab only
+        const unsafeItem = document.createElement("p");
+        unsafeItem.innerHTML = comment.content;
+        vulnerable.appendChild(unsafeItem);
+
+        // Safe text rendering
+        const safeItem = document.createElement("p");
+        safeItem.textContent = comment.content;
+        secure.appendChild(safeItem);
+      }
+    }
+
+    loadComments().catch(console.error);
+  </script>
+
+</body>
+</html>
