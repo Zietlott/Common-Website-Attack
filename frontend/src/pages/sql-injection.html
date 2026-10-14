@@ -92,6 +92,50 @@
             </div>
           </section>
 
+          <!-- Interactive SQL Injection Demo -->
+          <section class="lab-panel sql-demo">
+            <div class="lab-heading">
+              <h2>Demo truy vấn cơ sở dữ liệu</h2>
+              <p>
+                Nhập tên người dùng mẫu, sau đó so sánh kết quả giữa cách truy
+                vấn mô phỏng không an toàn và truy vấn tham số hóa. Chỉ thử
+                nghiệm trên dữ liệu của ứng dụng demo.
+              </p>
+            </div>
+
+            <div class="form-group">
+              <label for="sqlUsername">Tên người dùng cần tìm</label>
+              <input
+                type="text"
+                id="sqlUsername"
+                maxlength="200"
+                placeholder="Ví dụ: admin"
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="form-actions">
+              <button type="button" id="sqlVulnerableBtn" class="primary-btn">
+                Chạy mô phỏng không an toàn
+              </button>
+
+              <button type="button" id="sqlSecureBtn" class="secondary-btn">
+                Chạy truy vấn an toàn
+              </button>
+            </div>
+
+            <p id="sqlDemoStatus" role="status" aria-live="polite">
+              Nhập tên người dùng để bắt đầu.
+            </p>
+
+            <div class="lab-panel">
+              <h3>Kết quả từ Backend</h3>
+              <pre id="sqlDemoResult" class="output-box" aria-live="polite">
+Chưa có kết quả.</pre
+              >
+            </div>
+          </section>
+
           <!-- Knowledge check -->
           <section class="lab-panel sql-quiz">
             <div class="lab-heading">
@@ -166,6 +210,7 @@
     </div>
 
     <script src="../js/components.js"></script>
+    <script src="../js/api.js"></script>
     <script src="../js/sql-injection.js"></script>
   </body>
 </html>
