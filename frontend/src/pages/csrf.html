@@ -131,6 +131,59 @@
             </div>
           </section>
 
+          <!-- Interactive CSRF Demo -->
+          <section class="lab-panel csrf-demo">
+            <div class="lab-heading">
+              <h2>Demo kiểm tra CSRF token</h2>
+              <p>
+                Khởi tạo phiên demo, sau đó so sánh yêu cầu cập nhật thông tin
+                khi không có token và khi có token hợp lệ.
+              </p>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" id="csrfStartBtn" class="primary-btn">
+                Khởi tạo phiên demo
+              </button>
+
+              <button type="button" id="csrfStateBtn" class="secondary-btn">
+                Xem trạng thái phiên
+              </button>
+            </div>
+
+            <div class="form-group">
+              <label for="csrfDisplayName">Tên hiển thị mới</label>
+              <input
+                type="text"
+                id="csrfDisplayName"
+                maxlength="100"
+                placeholder="Ví dụ: Demo User"
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="form-actions">
+              <button type="button" id="csrfVulnerableBtn" class="primary-btn">
+                Gửi yêu cầu không có token
+              </button>
+
+              <button type="button" id="csrfSecureBtn" class="secondary-btn">
+                Gửi yêu cầu có token
+              </button>
+            </div>
+
+            <p id="csrfDemoStatus" role="status" aria-live="polite">
+              Hãy khởi tạo phiên demo trước khi gửi yêu cầu.
+            </p>
+
+            <div>
+              <h3>Kết quả từ Backend</h3>
+              <pre id="csrfDemoResult" class="output-box" aria-live="polite">
+Chưa có kết quả.</pre
+              >
+            </div>
+          </section>
+
           <!-- Protection -->
           <section class="lab-panel">
             <h2>Biện pháp phòng chống</h2>
@@ -155,6 +208,7 @@
     </div>
 
     <script src="../js/components.js"></script>
+    <script src="../js/api.js"></script>
     <script src="../js/csrf.js"></script>
   </body>
 </html>
