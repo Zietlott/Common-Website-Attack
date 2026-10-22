@@ -23,7 +23,19 @@ function findById(id) {
   return db.prepare(sql).get(id);
 }
 
+
+function findByUsername(username) {
+  const sql = `
+    SELECT id, username, password, email
+    FROM users
+    WHERE username = ?
+  `;
+
+  return db.prepare(sql).get(username);
+}
+
 module.exports = {
   findAll,
   findById,
+  findByUsername,
 };

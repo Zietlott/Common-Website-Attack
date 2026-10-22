@@ -1,4 +1,3 @@
-
 const CommentModel = require("../models/comment.model");
 const UserModel = require("../models/user.model");
 
@@ -12,26 +11,26 @@ function getAllComments(req, res) {
   });
 }
 
-// POST /api/comments
 function createComment(req, res) {
-  const { user_id, content } = req.body || {};
-  const userId = Number(user_id);
+  // Get authenticated user ID from session
+  const userId = req.session.authUserId;
+  const { content } = req.body || {};
 
-  // Validate user ID
+  // Validate authenticated user ID
   if (!Number.isSafeInteger(userId) || userId <= 0) {
-    return res.status(400).json({
+    return res.status(401).json({
       success: false,
-      message: "Invalid user ID",
+      message: "Authentication required",
     });
   }
 
-  // Check whether user exists
+  // Check whether authenticated user exists
   const user = UserModel.findById(userId);
 
   if (!user) {
-    return res.status(404).json({
+    return res.status(401).json({
       success: false,
-      message: "User not found",
+      message: "Invalid authenticated user",
     });
   }
 

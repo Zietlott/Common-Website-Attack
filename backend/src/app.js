@@ -2,12 +2,19 @@ const demoSession = require("./middleware/demo-session");
 const csrfRoutes = require("./routes/csrf.routes");
 const sqlInjectionRoutes = require("./routes/sql-injection.routes");
 const express = require("express");
+const helmet = require("helmet");
 const cors = require("cors");
 
 const userRoutes = require("./routes/user.routes");
 const commentRoutes = require("./routes/comment.routes");
+const authRoutes = require("./routes/auth.routes");
 
 const app = express();
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
 
 // Configure CORS
 app.use(
@@ -28,6 +35,9 @@ app.get("/api/health", (req, res) => {
     message: "Backend server is running",
   });
 });
+
+// Authentication API
+app.use("/api/auth", authRoutes);
 
 // User APIs
 app.use("/api/users", userRoutes);

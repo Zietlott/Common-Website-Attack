@@ -1,4 +1,3 @@
-
 const express = require("express");
 
 const {
@@ -6,11 +5,14 @@ const {
   createComment,
 } = require("../controllers/comment.controller");
 
+const requireAuth = require("../middleware/require-auth");
+
 const router = express.Router();
 
+// Public: Read comments for XSS Lab
 router.get("/", getAllComments);
 
-router.post("/", createComment);
+// Protected: Only authenticated users can create comments
+router.post("/", requireAuth, createComment);
 
 module.exports = router;
-
