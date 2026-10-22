@@ -5,6 +5,7 @@
 Tài liệu này mô tả các API của Backend trong dự án **Common Website Attacks and Countermeasures**, giúp thành viên Frontend kết nối và sử dụng đúng các chức năng.
 
 **Công nghệ sử dụng:**
+
 - Node.js
 - Express.js
 - SQLite
@@ -70,6 +71,7 @@ http://localhost:3000/api/users
 ```
 
 **Kết quả:**
+
 - HTTP `200 OK` nếu truy vấn thành công.
 - Trả về danh sách user mẫu trong trường `data`.
 - Không trả về mật khẩu.
@@ -83,20 +85,20 @@ http://localhost:3000/api/users
     {
       "id": 1,
       "username": "admin",
-      "email": "admin@example.com"
+      "email": "admin@example.com",
       "created_at": "2026-10-16 10:00:00"
     },
     {
       "id": 2,
       "username": "student",
-      "email": "student@example.com"
+      "email": "student@example.com",
       "created_at": "2026-10-16 10:00:00"
     }
   ]
 }
 ```
 
-*Lưu ý: Response thực tế có thể có thêm trường `created_at`.*
+_Lưu ý: Response thực tế có thể có thêm trường `created_at`._
 
 **Ví dụ gọi API:**
 
@@ -120,6 +122,7 @@ http://localhost:3000/api/users/1
 ```
 
 **Kết quả mong đợi:**
+
 - HTTP `200`: User tồn tại.
 - HTTP `400`: ID không hợp lệ.
 - HTTP `404`: User không tồn tại.
@@ -137,16 +140,14 @@ http://localhost:3000/api/users/1
 }
 ```
 
-*Lưu ý: Response thực tế có thể có thêm trường `created_at`.*
+_Lưu ý: Response thực tế có thể có thêm trường `created_at`._
 
 **Ví dụ gọi API:**
 
 ```javascript
 const userId = 1;
 
-const response = await fetch(
-  `http://localhost:3000/api/users/${userId}`
-);
+const response = await fetch(`http://localhost:3000/api/users/${userId}`);
 
 const result = await response.json();
 
@@ -209,7 +210,7 @@ http://localhost:3000/api/comments
 }
 ```
 
-*Lưu ý:* Thời gian và số lượng bình luận chỉ là ví dụ. Trường `username` được lấy từ bảng `users` thông qua `JOIN`.
+_Lưu ý:_ Thời gian và số lượng bình luận chỉ là ví dụ. Trường `username` được lấy từ bảng `users` thông qua `JOIN`.
 
 **Ví dụ gọi từ Frontend:**
 
@@ -268,7 +269,7 @@ Content-Type: application/json
 }
 ```
 
-*Lưu ý:* ID và thời gian chỉ là ví dụ. Response khi tạo bình luận không có trường `username`.
+_Lưu ý:_ ID và thời gian chỉ là ví dụ. Response khi tạo bình luận không có trường `username`.
 
 **Quy tắc kiểm tra dữ liệu:**
 
@@ -279,13 +280,13 @@ Content-Type: application/json
 
 **Các trường hợp lỗi:**
 
-| Trường hợp | HTTP | Thông báo |
-|---|---|---|
-| User ID không hợp lệ | 400 | Invalid user ID |
-| User không tồn tại | 404 | User not found |
-| Thiếu nội dung bình luận | 400 | Content must be 1-2000 characters |
-| Nội dung rỗng hoặc sai kiểu | 400 | Content must be 1-2000 characters |
-| Nội dung vượt quá 2.000 ký tự | 400 | Content must be 1-2000 characters |
+| Trường hợp                    | HTTP | Thông báo                         |
+| ----------------------------- | ---- | --------------------------------- |
+| User ID không hợp lệ          | 400  | Invalid user ID                   |
+| User không tồn tại            | 404  | User not found                    |
+| Thiếu nội dung bình luận      | 400  | Content must be 1-2000 characters |
+| Nội dung rỗng hoặc sai kiểu   | 400  | Content must be 1-2000 characters |
+| Nội dung vượt quá 2.000 ký tự | 400  | Content must be 1-2000 characters |
 
 **Ví dụ gọi từ Frontend:**
 
@@ -293,12 +294,12 @@ Content-Type: application/json
 const response = await fetch("http://localhost:3000/api/comments", {
   method: "POST",
   headers: {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
   },
   body: JSON.stringify({
     user_id: 1,
-    content: "Bình luận kiểm thử API"
-  })
+    content: "Bình luận kiểm thử API",
+  }),
 });
 
 const result = await response.json();
@@ -339,7 +340,7 @@ Trong dự án này, khu vực XSS Vulnerable trên giao diện chính chỉ dù
 
 SQL Injection là hình thức tấn công trong đó dữ liệu đầu vào không đáng tin cậy làm thay đổi cấu trúc hoặc logic của câu truy vấn SQL.
 
-Trong dự án, SQL Injection Lab sử dụng hai chế độ:
+Trong dự án, SQL Injection Lab minh họa việc tìm kiếm người dùng theo `username`; đây không phải luồng đăng nhập hay xác thực tài khoản. Lab sử dụng hai chế độ:
 
 - **Vulnerable Mode:** Ghép trực tiếp dữ liệu đầu vào vào câu truy vấn SQL để minh họa nguy cơ.
 - **Secure Mode:** Sử dụng truy vấn tham số hóa (Parameterized Query) để ngăn dữ liệu đầu vào thay đổi logic SQL.
@@ -377,18 +378,15 @@ Content-Type: application/json
 **Ví dụ gọi từ Frontend:**
 
 ```javascript
-const response = await fetch(
-  "http://localhost:3000/api/labs/sqli/vulnerable",
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      username: "admin"
-    })
-  }
-);
+const response = await fetch("http://localhost:3000/api/labs/sqli/vulnerable", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    username: "admin",
+  }),
+});
 
 const result = await response.json();
 console.log(result);
@@ -425,18 +423,15 @@ Content-Type: application/json
 **Ví dụ gọi từ Frontend:**
 
 ```javascript
-const response = await fetch(
-  "http://localhost:3000/api/labs/sqli/secure",
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      username: "admin"
-    })
-  }
-);
+const response = await fetch("http://localhost:3000/api/labs/sqli/secure", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    username: "admin",
+  }),
+});
 
 const result = await response.json();
 console.log(result);
@@ -450,12 +445,12 @@ Ví dụ chuỗi đầu vào dùng trong môi trường thử nghiệm local:
 ' OR '1'='1
 ```
 
-| Nội dung | Vulnerable Mode | Secure Mode |
-|---|---|---|
-| Xử lý đầu vào | Nối chuỗi trực tiếp vào SQL | Sử dụng tham số `?` |
-| Username hợp lệ | Trả về người dùng phù hợp | Trả về người dùng phù hợp |
+| Nội dung                       | Vulnerable Mode                   | Secure Mode                       |
+| ------------------------------ | --------------------------------- | --------------------------------- |
+| Xử lý đầu vào                  | Nối chuỗi trực tiếp vào SQL       | Sử dụng tham số `?`               |
+| Username hợp lệ                | Trả về người dùng phù hợp         | Trả về người dùng phù hợp         |
 | Chuỗi thử nghiệm SQL Injection | Có thể trả về nhiều tài khoản mẫu | Không làm thay đổi logic truy vấn |
-| Cơ chế bảo vệ | Không có tham số hóa | Parameterized Query |
+| Cơ chế bảo vệ                  | Không có tham số hóa              | Parameterized Query               |
 
 **Ví dụ truy vấn không an toàn:**
 
@@ -472,14 +467,14 @@ const users = db.prepare(sql).all(username);
 
 ### 6.5. Các trường hợp cần xử lý
 
-| Trường hợp | HTTP | Thông báo
-|---|---|---
-| Username hợp lệ và tìm thấy tài khoản | 200 | success: true, trả về dữ liệu người dùng trong data
-| Username không tồn tại | 200 | success: true, data là mảng rỗng
-| Thiếu username | 400 | Username must be 1-200 characters
-| Username sai kiểu dữ liệu | 400 | Username must be 1-200 characters
-| Username vượt quá 200 ký tự | 400 | Username must be 1-200 characters
-| Backend không chạy hoặc không thể kết nối | Không có HTTP response | Frontend hiển thị thông báo lỗi kết nối
+| Trường hợp                                | HTTP                   | Thông báo                                           |
+| ----------------------------------------- | ---------------------- | --------------------------------------------------- |
+| Username hợp lệ và tìm thấy tài khoản     | 200                    | success: true, trả về dữ liệu người dùng trong data |
+| Username không tồn tại                    | 200                    | success: true, data là mảng rỗng                    |
+| Thiếu username                            | 400                    | Username must be 1-200 characters                   |
+| Username sai kiểu dữ liệu                 | 400                    | Username must be 1-200 characters                   |
+| Username vượt quá 200 ký tự               | 400                    | Username must be 1-200 characters                   |
+| Backend không chạy hoặc không thể kết nối | Không có HTTP response | Frontend hiển thị thông báo lỗi kết nối             |
 
 ### 6.6. Lưu ý khi tích hợp Frontend
 
@@ -505,10 +500,12 @@ CSRF (Cross-Site Request Forgery) là hình thức tấn công lợi dụng phi�
 
 CSRF Lab trong dự án minh họa hai cơ chế:
 
-- **Vulnerable Mode:** Cho phép thay đổi dữ liệu phiên mà không cần xác minh CSRF token.
-- **Secure Mode:** Yêu cầu CSRF token hợp lệ trước khi thay đổi dữ liệu.
+- **Vulnerable Mode:** Endpoint cập nhật `displayName` khi có session demo hợp lệ nhưng không xác minh CSRF token.
+- **Secure Mode:** Endpoint cập nhật `displayName` khi có session demo hợp lệ và CSRF token hợp lệ; thiếu hoặc sai token sẽ bị từ chối với HTTP `403`.
 
-Lab sử dụng `express-session` và cookie `security_lab.sid`. Các API chỉ hoạt động khi `NODE_ENV=development`.
+Lab sử dụng `express-session` và cookie `security_lab.sid`. Cả hai request cập nhật trong giao diện demo đều gửi cookie của session; điểm khác biệt được thử nghiệm là endpoint có kiểm tra token hay không. Các API chỉ hoạt động khi `NODE_ENV=development`.
+
+Đây là phép so sánh kiểm tra token ở hai endpoint, không phải mô phỏng đầy đủ một cuộc tấn công cross-site trên trình duyệt. Cookie hiện đặt `SameSite=Lax`, backend demo chạy HTTP local và CORS chỉ cho phép origin frontend đã cấu hình đọc response. CORS không thay thế CSRF token hay cơ chế chống CSRF khác; hành vi gửi cookie còn phụ thuộc trình duyệt, scheme, hostname và cấu hình môi trường. Không suy rộng kết quả demo thành kết luận cho mọi triển khai CSRF thực tế.
 
 ### 7.2. POST /api/labs/csrf/start
 
@@ -531,13 +528,10 @@ Response chứa thông tin phiên demo và `csrfToken`. Trình duyệt nhận se
 **Ví dụ gọi từ Frontend:**
 
 ```javascript
-const response = await fetch(
-  "http://localhost:3000/api/labs/csrf/start",
-  {
-    method: "POST",
-    credentials: "include"
-  }
-);
+const response = await fetch("http://localhost:3000/api/labs/csrf/start", {
+  method: "POST",
+  credentials: "include",
+});
 
 const result = await response.json();
 
@@ -572,12 +566,9 @@ http://localhost:3000/api/labs/csrf/state
 **Ví dụ gọi từ Frontend:**
 
 ```javascript
-const response = await fetch(
-  "http://localhost:3000/api/labs/csrf/state",
-  {
-    credentials: "include"
-  }
-);
+const response = await fetch("http://localhost:3000/api/labs/csrf/state", {
+  credentials: "include",
+});
 
 const result = await response.json();
 
@@ -607,24 +598,20 @@ console.log(result.displayName);
 **Ví dụ gọi từ Frontend:**
 
 ```javascript
-const response = await fetch(
-  "http://localhost:3000/api/labs/csrf/vulnerable",
-  {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      displayName: "CSRF Vulnerable Test"
-    })
-  }
-);
+const response = await fetch("http://localhost:3000/api/labs/csrf/vulnerable", {
+  method: "POST",
+  credentials: "include",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    displayName: "CSRF Vulnerable Test",
+  }),
+});
 
 const result = await response.json();
 console.log(result);
 ```
-
 
 ### 7.5. POST /api/labs/csrf/secure
 
@@ -649,31 +636,28 @@ X-CSRF-Token: <CSRF token từ API /start>
 
 **Kết quả mong đợi:**
 
-| Trường hợp | HTTP | Thông báo
-|---|---|---
-| Có session và CSRF token hợp lệ | 200 | Cập nhật thành công
-| Thiếu CSRF token | 403 | Invalid CSRF token
-| CSRF token không hợp lệ | 403 | Invalid CSRF token
-| Không có session demo | 401 | Demo session required
-| Tên hiển thị không hợp lệ, token hợp lệ | 400 | Invalid display name
+| Trường hợp                              | HTTP | Thông báo             |
+| --------------------------------------- | ---- | --------------------- |
+| Có session và CSRF token hợp lệ         | 200  | Cập nhật thành công   |
+| Thiếu CSRF token                        | 403  | Invalid CSRF token    |
+| CSRF token không hợp lệ                 | 403  | Invalid CSRF token    |
+| Không có session demo                   | 401  | Demo session required |
+| Tên hiển thị không hợp lệ, token hợp lệ | 400  | Invalid display name  |
 
 **Ví dụ gọi từ Frontend:**
 
 ```javascript
-const response = await fetch(
-  "http://localhost:3000/api/labs/csrf/secure",
-  {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      "X-CSRF-Token": csrfToken
-    },
-    body: JSON.stringify({
-      displayName: "CSRF Secure Test"
-    })
-  }
-);
+const response = await fetch("http://localhost:3000/api/labs/csrf/secure", {
+  method: "POST",
+  credentials: "include",
+  headers: {
+    "Content-Type": "application/json",
+    "X-CSRF-Token": csrfToken,
+  },
+  body: JSON.stringify({
+    displayName: "CSRF Secure Test",
+  }),
+});
 
 const result = await response.json();
 
@@ -702,4 +686,7 @@ Frontend cần thực hiện theo thứ tự:
 - Không đọc session cookie bằng JavaScript vì cookie được cấu hình `HttpOnly`.
 - Nếu phiên demo mất hiệu lực, gọi lại `/api/labs/csrf/start`.
 - Không sử dụng endpoint Vulnerable trong môi trường production.
-- Việc kiểm tra token qua API local minh họa cơ chế xác minh; để đánh giá tấn công CSRF thực tế từ website khác còn phải xét chính sách `SameSite`, CORS và cách trình duyệt gửi cookie.
+- Endpoint Vulnerable trả về thành công khi có session và input hợp lệ mà không cần CSRF token; endpoint Secure yêu cầu token đúng và từ chối token thiếu/sai bằng HTTP `403`.
+- Demo kiểm tra hành vi của hai endpoint trong môi trường local, không tạo request từ một website cross-site độc hại.
+- Cookie demo dùng `SameSite=Lax` và `secure: false` cho HTTP local. Kết quả về việc trình duyệt gửi cookie có thể khác với môi trường HTTPS, hostname khác hoặc cấu hình cookie khác.
+- CORS kiểm soát origin được phép đọc response trong trình duyệt; CORS tự nó không phải cơ chế thay thế CSRF token.

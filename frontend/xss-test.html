@@ -1,61 +1,142 @@
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Stored XSS Browser Test</title>
-</head>
-<body>
+    <title>Stored XSS Demo Local | Web Security Lab</title>
 
-  <h1>Stored XSS Security Lab</h1>
+    <link rel="stylesheet" href="src/css/global.css" />
+    <link rel="stylesheet" href="src/css/components.css" />
+    <link rel="stylesheet" href="src/css/xss.css" />
+  </head>
+  <body>
+    <main class="content">
+      <header class="page-heading">
+        <span class="eyebrow-blue">DEMO THỬ NGHIỆM RIÊNG / STORED XSS</span>
+        <h1>So sánh cách render nội dung bình luận</h1>
+        <p>
+          Trang này tách biệt với demo XSS chính. Demo chính chỉ hiển thị văn
+          bản bằng <code>textContent</code>; trang này cố ý so sánh
+          <code>innerHTML</code> với <code>textContent</code>.
+        </p>
+      </header>
 
-  <h2>Vulnerable Mode</h2>
-  <div id="vulnerable"></div>
+      <section class="lab-panel" role="alert">
+        <h2>Cảnh báo: vùng không an toàn</h2>
+        <p>
+          Vùng “Cố ý không an toàn” diễn giải nội dung bình luận như HTML bằng
+          <code>innerHTML</code>. Nội dung không đáng tin cậy có thể gây ra
+          hành vi không mong muốn trong trình duyệt.
+        </p>
+        <p>
+          Chỉ chạy ứng dụng trên máy local và chỉ dùng dữ liệu giả trong
+          database demo. Không nhập hoặc lưu dữ liệu thật, thông tin cá nhân,
+          mật khẩu hay thông tin nhạy cảm. Không triển khai hoặc mở trang này
+          công khai.
+        </p>
+      </section>
 
-  <hr>
+      <section class="lab-panel">
+        <h2>Chạy phép so sánh</h2>
+        <p>
+          Nút này tải bình luận từ API local hiện tại. Hãy xác nhận database
+          chỉ chứa dữ liệu giả trước khi tải.
+        </p>
+        <div class="form-actions">
+          <button type="button" id="loadDemoBtn" class="primary-btn">
+            Tải dữ liệu giả và so sánh
+          </button>
+          <a class="secondary-btn" href="src/pages/xss.html">
+            Quay lại demo XSS an toàn
+          </a>
+        </div>
+        <p id="loadStatus" role="status" aria-live="polite">
+          Chưa tải bình luận. Chỉ tiếp tục với database demo chứa dữ liệu giả.
+        </p>
+      </section>
 
-  <h2>Secure Mode</h2>
-  <div id="secure"></div>
+      <div class="lab-layout">
+        <section class="lab-panel">
+          <h2>Cố ý không an toàn: <code>innerHTML</code></h2>
+          <p>
+            Trình duyệt diễn giải chuỗi nội dung như HTML. Đây chỉ là minh họa
+            rủi ro, không phải cách triển khai được khuyến nghị.
+          </p>
+          <div id="vulnerable" class="output-box" aria-live="polite">
+            Kết quả sẽ hiển thị sau khi tải dữ liệu giả.
+          </div>
+        </section>
 
-  <script>
-    async function loadComments() {
-      const response = await fetch(
-        "http://localhost:3000/api/comments"
-      );
+        <section class="lab-panel">
+          <h2>An toàn hơn: <code>textContent</code></h2>
+          <p>
+            Trình duyệt hiển thị nội dung như văn bản thuần, không diễn giải
+            chuỗi đó thành HTML.
+          </p>
+          <div id="secure" class="output-box" aria-live="polite">
+            Kết quả sẽ hiển thị sau khi tải dữ liệu giả.
+          </div>
+        </section>
+      </div>
+    </main>
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch comments");
-      }
+    <script>
+      const loadDemoBtn = document.getElementById("loadDemoBtn");
+      const loadStatus = document.getElementById("loadStatus");
+      const vulnerable = document.getElementById("vulnerable");
+      const secure = document.getElementById("secure");
 
-      const result = await response.json();
+      loadDemoBtn.addEventListener("click", async function () {
+        const confirmed = window.confirm(
+          "Chỉ tiếp tục nếu backend và database local chỉ chứa dữ liệu giả. Vùng innerHTML cố ý không an toàn. Bạn có muốn tiếp tục?",
+        );
 
-      const vulnerable =
-        document.getElementById("vulnerable");
+        if (!confirmed) {
+          loadStatus.textContent = "Đã hủy. Chưa tải hoặc hiển thị bình luận.";
+          return;
+        }
 
-      const secure =
-        document.getElementById("secure");
+        loadDemoBtn.disabled = true;
+        loadStatus.textContent = "Đang tải bình luận từ API local...";
 
-      vulnerable.replaceChildren();
-      secure.replaceChildren();
+        try {
+          const response = await fetch("http://localhost:3000/api/comments");
 
-      for (const comment of result.data) {
-        // Intentionally unsafe: local lab only
-        const unsafeItem = document.createElement("p");
-        unsafeItem.innerHTML = comment.content;
-        vulnerable.appendChild(unsafeItem);
+          if (!response.ok) {
+            throw new Error(`API trả về HTTP ${response.status}.`);
+          }
 
-        // Safe text rendering
-        const safeItem = document.createElement("p");
-        safeItem.textContent = comment.content;
-        secure.appendChild(safeItem);
-      }
-    }
+          const result = await response.json();
 
-    loadComments().catch(console.error);
-  </script>
+          if (!Array.isArray(result.data)) {
+            throw new Error("Dữ liệu bình luận từ API không hợp lệ.");
+          }
 
-</body>
+          vulnerable.replaceChildren();
+          secure.replaceChildren();
+
+          for (const comment of result.data) {
+            const unsafeItem = document.createElement("p");
+            unsafeItem.innerHTML = comment.content;
+            vulnerable.appendChild(unsafeItem);
+
+            const safeItem = document.createElement("p");
+            safeItem.textContent = comment.content;
+            secure.appendChild(safeItem);
+          }
+
+          loadStatus.textContent =
+            `Đã tải ${result.data.length} bình luận từ database demo local.`;
+        } catch (error) {
+          console.error("Không thể tải dữ liệu demo XSS:", error);
+          loadStatus.textContent =
+            "Không thể tải bình luận. Hãy kiểm tra backend local và database demo.";
+        } finally {
+          loadDemoBtn.disabled = false;
+        }
+      });
+    </script>
+  </body>
 </html>

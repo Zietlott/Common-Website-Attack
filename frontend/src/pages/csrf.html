@@ -136,9 +136,22 @@
             <div class="lab-heading">
               <h2>Demo kiểm tra CSRF token</h2>
               <p>
-                Khởi tạo phiên demo, sau đó so sánh yêu cầu cập nhật thông tin
-                khi không có token và khi có token hợp lệ.
+                Khởi tạo session local rồi so sánh hai endpoint cập nhật
+                display name: endpoint vulnerable chấp nhận request có session
+                mà không kiểm tra token; endpoint secure chỉ cập nhật khi token
+                trong header hợp lệ.
               </p>
+            </div>
+
+            <div class="csrf-info">
+              <strong>Phạm vi và giới hạn:</strong>
+              Đây là so sánh kiểm tra token ở hai endpoint, không phải mô phỏng
+              đầy đủ một cuộc tấn công cross-site trên trình duyệt. Cả hai
+              request của trang demo gửi session cookie; cookie được cấu hình
+              <code>SameSite=Lax</code> và môi trường hiện tại dùng HTTP local.
+              CORS chỉ giới hạn origin được phép đọc response trong trình
+              duyệt, không thay thế CSRF token hoặc các biện pháp chống CSRF.
+              API lab chỉ bật ở chế độ development.
             </div>
 
             <div class="form-actions">
@@ -164,16 +177,24 @@
 
             <div class="form-actions">
               <button type="button" id="csrfVulnerableBtn" class="primary-btn">
-                Gửi yêu cầu không có token
+                Gửi request vulnerable (không kiểm tra token)
               </button>
 
               <button type="button" id="csrfSecureBtn" class="secondary-btn">
-                Gửi yêu cầu có token
+                Gửi request secure (có token)
               </button>
             </div>
 
             <p id="csrfDemoStatus" role="status" aria-live="polite">
               Hãy khởi tạo phiên demo trước khi gửi yêu cầu.
+            </p>
+
+            <p>
+              Kết quả thành công ở endpoint vulnerable cho biết session hợp lệ
+              là đủ để endpoint này cập nhật tên. Endpoint secure trả về thành
+              công khi token đúng; token thiếu hoặc sai sẽ bị từ chối với HTTP
+              403. Các kết quả này chỉ thể hiện hành vi của hai endpoint trong
+              cấu hình demo hiện tại.
             </p>
 
             <div>

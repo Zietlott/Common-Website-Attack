@@ -172,6 +172,8 @@ X-CSRF-Token
 
 Nên sử dụng thống nhất hostname `localhost` cho cả Frontend và Backend.
 
+CSRF Lab chỉ so sánh hai endpoint local: endpoint Vulnerable chấp nhận session mà không kiểm tra token, còn endpoint Secure yêu cầu token hợp lệ. Đây không phải mô phỏng đầy đủ request cross-site trong trình duyệt. Cookie demo dùng `SameSite=Lax` và `secure: false` cho HTTP local; CORS giới hạn origin được phép đọc response nhưng không thay thế CSRF token hay biện pháp chống CSRF.
+
 ## 11. Xử lý lỗi thường gặp
 
 **Lỗi không kết nối được Backend:**
