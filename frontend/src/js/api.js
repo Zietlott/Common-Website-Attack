@@ -15,6 +15,12 @@ const API_BASE_URL = "http://localhost:3000/api";
  */
 async function apiRequest(endpoint, options = {}) {
   let response;
+  const headers = { ...options.headers };
+
+  // GET requests should stay CORS-simple; only JSON requests need this header.
+  if (options.body !== undefined && !headers["Content-Type"]) {
+    headers["Content-Type"] = "application/json";
+  }
 
   try {
     response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -22,11 +28,7 @@ async function apiRequest(endpoint, options = {}) {
 
       // Cần thiết để trình duyệt gửi/nhận cookie session của CSRF Lab.
       credentials: "include",
-
-      headers: {
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
+      headers,
     });
   } catch (error) {
     // Lỗi kết nối: Backend chưa chạy hoặc địa chỉ không đúng.

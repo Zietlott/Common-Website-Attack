@@ -10,6 +10,19 @@ const commentRoutes = require("./routes/comment.routes");
 const authRoutes = require("./routes/auth.routes");
 
 const app = express();
+const frontendOrigin = new URL(
+  process.env.FRONTEND_ORIGIN || "http://localhost:5500",
+);
+const allowedFrontendOrigins = new Set([frontendOrigin.origin]);
+
+if (frontendOrigin.hostname === "localhost") {
+  frontendOrigin.hostname = "127.0.0.1";
+  allowedFrontendOrigins.add(frontendOrigin.origin);
+} else if (frontendOrigin.hostname === "127.0.0.1") {
+  frontendOrigin.hostname = "localhost";
+  allowedFrontendOrigins.add(frontendOrigin.origin);
+}
+
 app.use(
   helmet({
     contentSecurityPolicy: false,
@@ -19,7 +32,9 @@ app.use(
 // Configure CORS
 app.use(
   cors({
-    origin: process.env.FRONTEND_ORIGIN || "http://localhost:5500",
+    origin(origin, callback) {
+      callback(null, !origin || allowedFrontendOrigins.has(origin));
+    },
     credentials: true,
   })
 );

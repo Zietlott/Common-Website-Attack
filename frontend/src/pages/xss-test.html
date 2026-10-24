@@ -7,9 +7,9 @@
 
     <title>Stored XSS Demo Local | Web Security Lab</title>
 
-    <link rel="stylesheet" href="src/css/global.css" />
-    <link rel="stylesheet" href="src/css/components.css" />
-    <link rel="stylesheet" href="src/css/xss.css" />
+    <link rel="stylesheet" href="../css/global.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="../css/xss.css" />
   </head>
   <body>
     <main class="content">
@@ -48,7 +48,7 @@
           <button type="button" id="loadDemoBtn" class="primary-btn">
             Tải dữ liệu giả và so sánh
           </button>
-          <a class="secondary-btn" href="src/pages/xss.html">
+          <a class="secondary-btn" href="xss.html">
             Quay lại demo XSS an toàn
           </a>
         </div>
@@ -82,6 +82,7 @@
       </div>
     </main>
 
+    <script src="../js/api.js"></script>
     <script>
       const loadDemoBtn = document.getElementById("loadDemoBtn");
       const loadStatus = document.getElementById("loadStatus");
@@ -102,15 +103,9 @@
         loadStatus.textContent = "Đang tải bình luận từ API local...";
 
         try {
-          const response = await fetch("http://localhost:3000/api/comments");
+          const result = await apiRequest("/comments");
 
-          if (!response.ok) {
-            throw new Error(`API trả về HTTP ${response.status}.`);
-          }
-
-          const result = await response.json();
-
-          if (!Array.isArray(result.data)) {
+          if (result.success !== true || !Array.isArray(result.data)) {
             throw new Error("Dữ liệu bình luận từ API không hợp lệ.");
           }
 
@@ -131,8 +126,7 @@
             `Đã tải ${result.data.length} bình luận từ database demo local.`;
         } catch (error) {
           console.error("Không thể tải dữ liệu demo XSS:", error);
-          loadStatus.textContent =
-            "Không thể tải bình luận. Hãy kiểm tra backend local và database demo.";
+          loadStatus.textContent = `Không thể tải bình luận: ${error.message}`;
         } finally {
           loadDemoBtn.disabled = false;
         }

@@ -143,13 +143,18 @@ Nếu nhận được phản hồi trên, Backend đã khởi động thành cô
 | POST | `/api/labs/csrf/secure` | Thay đổi dữ liệu có xác minh CSRF token |
 
 Các API mô phỏng SQL Injection và CSRF chỉ được bật khi `NODE_ENV=development`.
+Khi chạy bằng `npm run dev` (trong thư mục `backend`), Backend tự đặt chế độ
+này nếu `NODE_ENV` chưa được cấu hình. Giá trị `NODE_ENV` khai báo tường minh
+trong môi trường hoặc `.env` được giữ nguyên; `npm start` không tự bật các route
+lab.
 
 ## 10. Lưu ý khi kết nối Frontend
 
-Frontend mặc định chạy tại:
+Frontend mặc định chạy tại một trong hai địa chỉ local:
 
 ```text
 http://localhost:5500
+http://127.0.0.1:5500
 ```
 
 Backend chạy tại:
@@ -170,7 +175,9 @@ credentials: "include"
 X-CSRF-Token
 ```
 
-Nên sử dụng thống nhất hostname `localhost` cho cả Frontend và Backend.
+Backend chỉ cho phép origin frontend được cấu hình và alias loopback tương ứng
+(`localhost`/`127.0.0.1`) trên cùng cổng; không cho phép các origin tùy ý.
+Các URL API vẫn dùng `localhost:3000`.
 
 CSRF Lab chỉ so sánh hai endpoint local: endpoint Vulnerable chấp nhận session mà không kiểm tra token, còn endpoint Secure yêu cầu token hợp lệ. Đây không phải mô phỏng đầy đủ request cross-site trong trình duyệt. Cookie demo dùng `SameSite=Lax` và `secure: false` cho HTTP local; CORS giới hạn origin được phép đọc response nhưng không thay thế CSRF token hay biện pháp chống CSRF.
 
