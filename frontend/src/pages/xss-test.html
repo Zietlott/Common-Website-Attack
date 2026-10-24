@@ -5,132 +5,100 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Comment XSS Simulation | Web Security Lab</title>
+    <meta
+      name="description"
+      content="So sánh cách hiển thị bình luận mẫu trong mô phỏng XSS an toàn."
+    />
+
+    <title>Comment XSS Demo | Web Security Lab</title>
 
     <link rel="stylesheet" href="../css/global.css" />
     <link rel="stylesheet" href="../css/components.css" />
     <link rel="stylesheet" href="../css/xss.css" />
   </head>
-  <body>
-    <main class="content">
-      <header class="page-heading">
-        <span class="eyebrow-blue">DEMO LOCAL / XSS COMMENT</span>
-        <h1>So sánh cách render nội dung bình luận</h1>
-        <p>
-          Trang này tải bình luận từ backend local và so sánh preview HTML giới
-          hạn với cách hiển thị an toàn bằng <code>textContent</code>.
-        </p>
-      </header>
+  <body data-page="xss" data-title="Demo bình luận XSS">
+    <div class="app">
+      <div id="sidebar-container"></div>
 
-      <section class="lab-panel" role="alert">
-        <h2>Giới hạn an toàn của mô phỏng</h2>
-        <p>
-          Preview chỉ diễn giải một số thẻ định dạng văn bản; thuộc tính không
-          được giữ lại, script và nội dung nhúng bị bỏ qua. Ứng dụng thực tế
-          không nên đưa dữ liệu không tin cậy trực tiếp vào
-          <code>innerHTML</code>.
-        </p>
-        <p>
-          Chỉ dùng dữ liệu giả trong database local; không nhập hoặc lưu dữ
-          liệu thật, thông tin cá nhân, mật khẩu hay thông tin nhạy cảm.
-        </p>
-      </section>
+      <main class="main-content">
+        <div id="header-container"></div>
 
-      <section class="lab-panel">
-        <h2>Chạy phép so sánh</h2>
-        <p>
-          Nút này tải bình luận từ API local hiện tại. Hãy xác nhận database
-          chỉ chứa dữ liệu giả trước khi tải.
-        </p>
-        <div class="form-actions">
-          <button type="button" id="loadDemoBtn" class="primary-btn">
-            Tải bình luận local
-          </button>
-          <a class="secondary-btn" href="xss.html">
-            Quay lại demo XSS an toàn
-          </a>
-        </div>
-        <p id="loadStatus" role="status" aria-live="polite">
-          Chưa tải bình luận. Chỉ tiếp tục với database demo chứa dữ liệu giả.
-        </p>
-      </section>
+        <section class="content">
+          <header class="page-heading">
+            <span class="eyebrow-blue">DEMO LOCAL / XSS COMMENT</span>
+            <h1>So sánh cách hiển thị bình luận</h1>
+            <p>
+              Tải bình luận từ backend local để so sánh preview HTML giới hạn
+              với cách hiển thị an toàn bằng <code>textContent</code>.
+            </p>
+          </header>
 
-      <div class="lab-layout">
-        <section class="lab-panel">
-          <h2>Preview diễn giải HTML giới hạn</h2>
-          <p>
-            Minh họa khác biệt khi thẻ định dạng được diễn giải. Đây không phải
-            một sink <code>innerHTML</code> không an toàn; thuộc tính bị loại
-            bỏ và nội dung hoạt động không được chạy.
-          </p>
-          <div id="vulnerable" class="output-box" aria-live="polite">
-            Kết quả sẽ hiển thị sau khi tải dữ liệu giả.
+          <section class="lab-panel">
+            <h2>Giới hạn an toàn của mô phỏng</h2>
+            <p>
+              Preview chỉ diễn giải một số thẻ định dạng văn bản; thuộc tính
+              không được giữ lại, script và nội dung nhúng bị bỏ qua. Ứng dụng
+              thực tế không nên đưa dữ liệu không tin cậy trực tiếp vào
+              <code>innerHTML</code>.
+            </p>
+            <p>
+              Chỉ dùng dữ liệu giả trong database local; không nhập hoặc lưu dữ
+              liệu thật, thông tin cá nhân, mật khẩu hay thông tin nhạy cảm.
+            </p>
+          </section>
+
+          <section class="lab-panel">
+            <h2>Chạy phép so sánh</h2>
+            <p>
+              Nút này tải bình luận từ API local hiện tại. Hãy xác nhận database
+              chỉ chứa dữ liệu giả trước khi tải.
+            </p>
+            <div class="form-actions">
+              <button type="button" id="loadDemoBtn" class="primary-btn">
+                Tải bình luận local
+              </button>
+              <a class="secondary-btn" href="xss.html">
+                Quay lại demo XSS an toàn
+              </a>
+            </div>
+            <p id="loadStatus" role="status" aria-live="polite">
+              Chưa tải bình luận. Chỉ tiếp tục với database demo chứa dữ liệu giả.
+            </p>
+          </section>
+
+          <div class="lab-layout">
+            <section class="lab-panel">
+              <h2>Preview diễn giải HTML giới hạn</h2>
+              <p>
+                Minh họa khác biệt khi thẻ định dạng được diễn giải. Đây không
+                phải một sink <code>innerHTML</code> không an toàn; thuộc tính
+                bị loại bỏ và nội dung hoạt động không được chạy.
+              </p>
+              <div id="vulnerable" class="output-box" aria-live="polite">
+                Kết quả sẽ hiển thị sau khi tải dữ liệu giả.
+              </div>
+            </section>
+
+            <section class="lab-panel">
+              <h2>An toàn hơn: <code>textContent</code></h2>
+              <p>
+                Trình duyệt hiển thị nội dung như văn bản thuần, không diễn giải
+                chuỗi đó thành HTML.
+              </p>
+              <div id="secure" class="output-box" aria-live="polite">
+                Kết quả sẽ hiển thị sau khi tải dữ liệu giả.
+              </div>
+            </section>
           </div>
         </section>
 
-        <section class="lab-panel">
-          <h2>An toàn hơn: <code>textContent</code></h2>
-          <p>
-            Trình duyệt hiển thị nội dung như văn bản thuần, không diễn giải
-            chuỗi đó thành HTML.
-          </p>
-          <div id="secure" class="output-box" aria-live="polite">
-            Kết quả sẽ hiển thị sau khi tải dữ liệu giả.
-          </div>
-        </section>
-      </div>
-    </main>
+        <div id="footer-container"></div>
+      </main>
+    </div>
 
+    <script src="../js/components.js"></script>
     <script src="../js/api.js"></script>
     <script src="../js/xss-preview.js"></script>
-    <script>
-      const loadDemoBtn = document.getElementById("loadDemoBtn");
-      const loadStatus = document.getElementById("loadStatus");
-      const vulnerable = document.getElementById("vulnerable");
-      const secure = document.getElementById("secure");
-
-      loadDemoBtn.addEventListener("click", async function () {
-        const confirmed = window.confirm(
-          "Chỉ tiếp tục nếu database local chỉ chứa dữ liệu giả. Bạn có muốn tải bình luận?",
-        );
-
-        if (!confirmed) {
-          loadStatus.textContent = "Đã hủy. Chưa tải hoặc hiển thị bình luận.";
-          return;
-        }
-
-        loadDemoBtn.disabled = true;
-        loadStatus.textContent = "Đang tải bình luận từ API local...";
-
-        try {
-          const result = await apiRequest("/comments");
-
-          if (result.success !== true || !Array.isArray(result.data)) {
-            throw new Error("Dữ liệu bình luận từ API không hợp lệ.");
-          }
-
-          vulnerable.replaceChildren();
-          secure.replaceChildren();
-
-          for (const comment of result.data) {
-            const previewItem = document.createElement("p");
-            previewItem.appendChild(createSafeXssPreview(comment.content));
-            vulnerable.appendChild(previewItem);
-
-            const safeItem = document.createElement("p");
-            safeItem.textContent = comment.content;
-            secure.appendChild(safeItem);
-          }
-
-          loadStatus.textContent =
-            `Đã tải ${result.data.length} bình luận từ database demo local.`;
-        } catch (error) {
-          console.error("Không thể tải dữ liệu demo XSS:", error);
-          loadStatus.textContent = `Không thể tải bình luận: ${error.message}`;
-        } finally {
-          loadDemoBtn.disabled = false;
-        }
-      });
-    </script>
+    <script src="../js/xss-test.js"></script>
   </body>
 </html>
