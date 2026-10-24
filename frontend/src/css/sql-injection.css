@@ -6,6 +6,12 @@
   max-width: 1200px;
 }
 
+.sql-content,
+.sql-demo,
+.query-example {
+  min-width: 0;
+}
+
 /* ---------------------------------------------------------
    Information box
    --------------------------------------------------------- */
@@ -33,9 +39,14 @@
    --------------------------------------------------------- */
 
 .sql-comparison {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.sql-comparison-heading {
+  grid-column: 1 / -1;
+  margin-bottom: 0;
 }
 
 .query-example {
@@ -64,6 +75,11 @@
 
 .query-example p {
   line-height: 1.7;
+}
+
+.query-example pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .query-badge {
@@ -116,6 +132,152 @@
 
 .query-example code {
   font-family: inherit;
+}
+
+/* ---------------------------------------------------------
+   Interactive login demo
+   --------------------------------------------------------- */
+
+.sql-demo {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.sql-demo .lab-heading {
+  margin-bottom: 0;
+}
+
+.sql-demo-notice {
+  padding: 13px 15px;
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-md);
+  background: #fffbeb;
+  color: #78350f;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.sql-demo-notice strong {
+  color: #92400e;
+}
+
+.sql-demo-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.sql-demo-fields .form-group {
+  min-width: 0;
+}
+
+.sql-demo-fields input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+}
+
+.sql-demo-modes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.sql-demo-mode {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: #fff;
+}
+
+.sql-demo-mode-unsafe {
+  border-color: #fecaca;
+  background: #fffafa;
+}
+
+.sql-demo-mode-safe {
+  border-color: #bbf7d0;
+  background: #fbfffc;
+}
+
+.sql-demo-mode h3,
+.sql-demo-result h3 {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1rem;
+}
+
+.sql-demo-mode p {
+  flex: 1;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.sql-demo-mode button {
+  max-width: 100%;
+  white-space: normal;
+}
+
+#sqlDemoStatus {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.sql-demo-result {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sql-demo-summary {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: #f8fafc;
+  color: var(--text-main);
+  line-height: 1.6;
+}
+
+.sql-demo-summary.is-success {
+  border-color: #86efac;
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.sql-demo-summary.is-failure,
+.sql-demo-summary.is-error {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.sql-response-details {
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: #fff;
+}
+
+.sql-response-details summary {
+  color: var(--text-main);
+  cursor: pointer;
+  font-weight: 650;
+}
+
+.sql-response-details pre {
+  margin-bottom: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 /* ---------------------------------------------------------
@@ -210,6 +372,12 @@
    --------------------------------------------------------- */
 
 @media (max-width: 600px) {
+  .sql-comparison,
+  .sql-demo-fields,
+  .sql-demo-modes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .query-example {
     padding: 15px;
   }

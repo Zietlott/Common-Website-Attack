@@ -58,18 +58,17 @@
               <h2>Thử nghiệm xử lý dữ liệu đầu vào</h2>
 
               <p>
-                Nhập một đoạn văn bản để so sánh cách hiển thị dữ liệu. Trang
-                này là demo an toàn: cả hai vùng đều dùng
-                <code>textContent</code>, không diễn giải hay thực thi nội dung
-                nhập vào.
+                Nhập nội dung mẫu để so sánh preview diễn giải một số thẻ định
+                dạng HTML với cách hiển thị nguyên văn bằng
+                <code>textContent</code>. Preview chỉ cho phép thẻ định dạng
+                văn bản, bỏ qua nội dung hoạt động và không giữ lại thuộc tính.
               </p>
 
               <p>
-                Muốn xem đối chiếu với cách render cố ý không an toàn? Chỉ mở
-                demo thử nghiệm riêng trong môi trường local và dùng dữ liệu
-                giả:
+                Có thể tải bình luận mẫu từ backend local để xem cùng phép so
+                sánh:
                 <a class="secondary-btn" href="xss-test.html">
-                  Mở Stored XSS demo local
+                  Mở demo bình luận local
                 </a>
               </p>
             </div>
@@ -83,9 +82,27 @@
                   id="userInput"
                   name="userInput"
                   rows="5"
-                  placeholder="Nhập văn bản để thử nghiệm..."
+                  placeholder="Ví dụ: <strong>Xin chào</strong>"
                   required
                 ></textarea>
+              </div>
+
+              <div class="xss-examples" aria-label="Ví dụ đầu vào">
+                <span>Thử nhanh:</span>
+                <button
+                  type="button"
+                  class="secondary-btn xss-example-btn"
+                  data-xss-example="formatting"
+                >
+                  Thẻ định dạng
+                </button>
+                <button
+                  type="button"
+                  class="secondary-btn xss-example-btn"
+                  data-xss-example="active-content"
+                >
+                  Nội dung hoạt động bị lọc
+                </button>
               </div>
 
               <div
@@ -106,21 +123,23 @@
 
             <!-- OUTPUT -->
             <div class="lab-layout">
-              <!-- VULNERABLE SIMULATION -->
+              <!-- Inert HTML interpretation preview -->
               <section class="lab-panel">
                 <div class="result-heading">
                   <span class="result-number"> 01 </span>
 
                   <div>
-                    <h3>Ví dụ xử lý không an toàn</h3>
+                    <h3>HTML được diễn giải (preview)</h3>
 
-                    <span class="result-label"> MÔ PHỎNG </span>
+                    <span class="result-label"> PREVIEW AN TOÀN </span>
                   </div>
                 </div>
 
                 <p>
-                  Nếu ứng dụng chèn trực tiếp dữ liệu không đáng tin cậy vào
-                  HTML, trình duyệt có thể diễn giải nội dung đó ngoài ý muốn.
+                  Một ứng dụng dùng <code>innerHTML</code> trực tiếp có thể
+                  khiến trình duyệt diễn giải nội dung không tin cậy. Preview
+                  này chỉ dựng một danh sách thẻ định dạng an toàn để minh họa;
+                  không chạy nội dung hoạt động.
                 </p>
 
                 <div
@@ -192,6 +211,9 @@
 
     <!-- Shared JS -->
     <script src="../js/components.js"></script>
+
+    <!-- Safe, allow-listed HTML interpretation preview -->
+    <script src="../js/xss-preview.js"></script>
 
     <!-- XSS JS -->
     <script src="../js/xss.js"></script>

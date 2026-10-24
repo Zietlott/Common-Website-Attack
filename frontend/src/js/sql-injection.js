@@ -5,10 +5,12 @@
 
 // ----- Demo gọi Backend -----
 const sqlUsername = document.getElementById("sqlUsername");
+const sqlPassword = document.getElementById("sqlPassword");
 const sqlVulnerableBtn = document.getElementById("sqlVulnerableBtn");
 const sqlSecureBtn = document.getElementById("sqlSecureBtn");
 const sqlDemoStatus = document.getElementById("sqlDemoStatus");
 const sqlDemoResult = document.getElementById("sqlDemoResult");
+const sqlDemoSummary = document.getElementById("sqlDemoSummary");
 
 /**
  * Hiển thị trạng thái của demo.
@@ -27,25 +29,47 @@ function renderSqlDemoResult(result) {
   if (!sqlDemoResult) return;
 
   sqlDemoResult.textContent = JSON.stringify(result, null, 2);
+
+  if (!sqlDemoSummary) return;
+
+  sqlDemoSummary.classList.remove(
+    "is-success",
+    "is-failure",
+    "is-error",
+  );
+
+  if (result.mode === "vulnerable") {
+    sqlDemoSummary.classList.add("is-failure");
+    sqlDemoSummary.textContent = result.authenticated
+      ? "Chế độ vulnerable đã xác thực yêu cầu. Đây là luồng cố ý không an toàn vì dữ liệu được ghép vào SQL; không dùng cách này cho ứng dụng thật."
+      : "Đăng nhập không thành công. Dù kết quả này bị từ chối, chế độ vulnerable vẫn ghép đầu vào vào SQL và không an toàn.";
+    return;
+  }
+
+  sqlDemoSummary.classList.add(
+    result.authenticated ? "is-success" : "is-failure",
+  );
+  sqlDemoSummary.textContent = result.authenticated
+    ? "Đăng nhập thành công ở chế độ secure. Username được truy vấn bằng tham số; password được kiểm tra riêng."
+    : "Đăng nhập không thành công ở chế độ secure. Đầu vào được xử lý như dữ liệu, không làm thay đổi cấu trúc truy vấn.";
 }
 
 /**
- * Gửi tên người dùng đến API và hiển thị kết quả.
+ * Gửi tài khoản thử nghiệm đến API và hiển thị kết quả đăng nhập.
  */
 async function runSqlDemo(mode) {
-  if (!sqlUsername || !sqlDemoStatus || !sqlDemoResult) {
+  if (!sqlUsername || !sqlPassword || !sqlDemoStatus || !sqlDemoResult) {
     return;
   }
 
   const username = sqlUsername.value.trim();
+  const password = sqlPassword.value;
 
-  if (!username) {
-    setSqlDemoStatus("Vui lòng nhập tên người dùng.");
-    sqlUsername.focus();
+  if (!username || !password) {
+    setSqlDemoStatus("Vui lòng nhập cả tên đăng nhập và mật khẩu thử nghiệm.");
+    (username ? sqlPassword : sqlUsername).focus();
     return;
   }
-
-  const button = mode === "vulnerable" ? sqlVulnerableBtn : sqlSecureBtn;
 
   // Ngăn gửi nhiều yêu cầu liên tục khi đang chờ phản hồi.
   if (sqlVulnerableBtn) sqlVulnerableBtn.disabled = true;
@@ -53,23 +77,38 @@ async function runSqlDemo(mode) {
 
   setSqlDemoStatus("Đang gửi yêu cầu đến Backend...");
   sqlDemoResult.textContent = "Đang tải kết quả...";
+  if (sqlDemoSummary) {
+    sqlDemoSummary.classList.remove(
+      "is-success",
+      "is-failure",
+      "is-error",
+    );
+    sqlDemoSummary.textContent = "Đang chờ kết quả xác thực từ backend...";
+  }
 
   try {
     const endpoint =
-      mode === "vulnerable" ? "/labs/sqli/vulnerable" : "/labs/sqli/secure";
+      mode === "vulnerable"
+        ? "/labs/sqli/login-vulnerable"
+        : "/labs/sqli/login-secure";
 
-    const result = await apiPost(endpoint, { username });
+    const result = await apiPost(endpoint, { username, password });
 
     renderSqlDemoResult(result);
 
     setSqlDemoStatus(
-      mode === "vulnerable"
-        ? "Đã nhận kết quả từ mô hình truy vấn không an toàn."
-        : "Đã nhận kết quả từ mô hình truy vấn an toàn.",
+      result.authenticated
+        ? `Đăng nhập mô phỏng thành công (${mode}).`
+        : `Đăng nhập mô phỏng thất bại (${mode}).`,
     );
   } catch (error) {
     sqlDemoResult.textContent = "Không có kết quả.";
     setSqlDemoStatus(error.message);
+    if (sqlDemoSummary) {
+      sqlDemoSummary.classList.remove("is-success", "is-failure");
+      sqlDemoSummary.classList.add("is-error");
+      sqlDemoSummary.textContent = error.message;
+    }
   } finally {
     if (sqlVulnerableBtn) sqlVulnerableBtn.disabled = false;
     if (sqlSecureBtn) sqlSecureBtn.disabled = false;

@@ -70,15 +70,15 @@ async function executeCsrfAction(action, successMessage) {
  * Khởi tạo phiên demo và nhận CSRF token từ Backend.
  */
 if (csrfStartBtn) {
-  csrfStartBtn.addEventListener("click", function () {
-    executeCsrfAction(async function () {
+  csrfStartBtn.addEventListener("click", async function () {
+    await executeCsrfAction(async function () {
       const result = await apiPost("/labs/csrf/start", {});
 
-      csrfToken = result.csrfToken || null;
-
-      if (!csrfToken) {
+      if (typeof result.csrfToken !== "string" || !result.csrfToken) {
         throw new Error("Backend không trả về CSRF token.");
       }
+
+      csrfToken = result.csrfToken;
 
       return {
         success: result.success,

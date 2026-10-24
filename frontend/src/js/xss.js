@@ -15,6 +15,13 @@ const safeOutput = document.getElementById("safeOutput");
 
 const resetBtn = document.getElementById("resetBtn");
 const xssMessage = document.getElementById("xssMessage");
+const xssExampleButtons = document.querySelectorAll(".xss-example-btn");
+
+const xssExamples = {
+  formatting: "<p>Xin chào <strong>bạn</strong>!</p>",
+  "active-content":
+    '<strong>Nội dung mẫu</strong> <script>console.log("XSS demo")</script>',
+};
 
 if (xssForm && userInput && vulnerableOutput && safeOutput && resetBtn) {
   /* -------------------------------------------------------
@@ -61,22 +68,12 @@ if (xssForm && userInput && vulnerableOutput && safeOutput && resetBtn) {
      ------------------------------------------------------- */
 
   function renderResults(input) {
-    /*
-      Both outputs intentionally use textContent.
-
-      This means the browser treats the input as plain text
-      instead of interpreting it as HTML or JavaScript.
-
-      The "vulnerable" panel is only a visual simulation
-      explaining what could happen in an unsafe implementation.
-    */
-
-    vulnerableOutput.textContent = input;
+    vulnerableOutput.replaceChildren(createSafeXssPreview(input));
 
     vulnerableOutput.appendChild(
       createMessage(
         "simulation-warning",
-        "Mô phỏng: nếu ứng dụng chèn dữ liệu người dùng trực tiếp vào HTML, dữ liệu không được kiểm soát có thể tạo ra rủi ro XSS.",
+        "Preview chỉ diễn giải thẻ định dạng văn bản, bỏ qua nội dung hoạt động và không giữ lại thuộc tính.",
       ),
     );
 
@@ -85,7 +82,7 @@ if (xssForm && userInput && vulnerableOutput && safeOutput && resetBtn) {
     safeOutput.appendChild(
       createMessage(
         "simulation-success",
-        "An toàn hơn: dữ liệu được xử lý như văn bản thuần, không được trình duyệt thực thi như HTML hoặc JavaScript.",
+        "An toàn hơn: textContent hiển thị toàn bộ dữ liệu như văn bản thuần, không diễn giải thành HTML.",
       ),
     );
   }
@@ -107,6 +104,20 @@ if (xssForm && userInput && vulnerableOutput && safeOutput && resetBtn) {
 
     hideMessage();
     renderResults(input);
+  });
+
+  xssExampleButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+      const example = xssExamples[button.dataset.xssExample];
+
+      if (!example) {
+        return;
+      }
+
+      userInput.value = example;
+      hideMessage();
+      renderResults(example);
+    });
   });
 
   /* -------------------------------------------------------

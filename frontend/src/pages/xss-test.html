@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Stored XSS Demo Local | Web Security Lab</title>
+    <title>Comment XSS Simulation | Web Security Lab</title>
 
     <link rel="stylesheet" href="../css/global.css" />
     <link rel="stylesheet" href="../css/components.css" />
@@ -14,27 +14,25 @@
   <body>
     <main class="content">
       <header class="page-heading">
-        <span class="eyebrow-blue">DEMO THỬ NGHIỆM RIÊNG / STORED XSS</span>
+        <span class="eyebrow-blue">DEMO LOCAL / XSS COMMENT</span>
         <h1>So sánh cách render nội dung bình luận</h1>
         <p>
-          Trang này tách biệt với demo XSS chính. Demo chính chỉ hiển thị văn
-          bản bằng <code>textContent</code>; trang này cố ý so sánh
-          <code>innerHTML</code> với <code>textContent</code>.
+          Trang này tải bình luận từ backend local và so sánh preview HTML giới
+          hạn với cách hiển thị an toàn bằng <code>textContent</code>.
         </p>
       </header>
 
       <section class="lab-panel" role="alert">
-        <h2>Cảnh báo: vùng không an toàn</h2>
+        <h2>Giới hạn an toàn của mô phỏng</h2>
         <p>
-          Vùng “Cố ý không an toàn” diễn giải nội dung bình luận như HTML bằng
-          <code>innerHTML</code>. Nội dung không đáng tin cậy có thể gây ra
-          hành vi không mong muốn trong trình duyệt.
+          Preview chỉ diễn giải một số thẻ định dạng văn bản; thuộc tính không
+          được giữ lại, script và nội dung nhúng bị bỏ qua. Ứng dụng thực tế
+          không nên đưa dữ liệu không tin cậy trực tiếp vào
+          <code>innerHTML</code>.
         </p>
         <p>
-          Chỉ chạy ứng dụng trên máy local và chỉ dùng dữ liệu giả trong
-          database demo. Không nhập hoặc lưu dữ liệu thật, thông tin cá nhân,
-          mật khẩu hay thông tin nhạy cảm. Không triển khai hoặc mở trang này
-          công khai.
+          Chỉ dùng dữ liệu giả trong database local; không nhập hoặc lưu dữ
+          liệu thật, thông tin cá nhân, mật khẩu hay thông tin nhạy cảm.
         </p>
       </section>
 
@@ -46,7 +44,7 @@
         </p>
         <div class="form-actions">
           <button type="button" id="loadDemoBtn" class="primary-btn">
-            Tải dữ liệu giả và so sánh
+            Tải bình luận local
           </button>
           <a class="secondary-btn" href="xss.html">
             Quay lại demo XSS an toàn
@@ -59,10 +57,11 @@
 
       <div class="lab-layout">
         <section class="lab-panel">
-          <h2>Cố ý không an toàn: <code>innerHTML</code></h2>
+          <h2>Preview diễn giải HTML giới hạn</h2>
           <p>
-            Trình duyệt diễn giải chuỗi nội dung như HTML. Đây chỉ là minh họa
-            rủi ro, không phải cách triển khai được khuyến nghị.
+            Minh họa khác biệt khi thẻ định dạng được diễn giải. Đây không phải
+            một sink <code>innerHTML</code> không an toàn; thuộc tính bị loại
+            bỏ và nội dung hoạt động không được chạy.
           </p>
           <div id="vulnerable" class="output-box" aria-live="polite">
             Kết quả sẽ hiển thị sau khi tải dữ liệu giả.
@@ -83,6 +82,7 @@
     </main>
 
     <script src="../js/api.js"></script>
+    <script src="../js/xss-preview.js"></script>
     <script>
       const loadDemoBtn = document.getElementById("loadDemoBtn");
       const loadStatus = document.getElementById("loadStatus");
@@ -91,7 +91,7 @@
 
       loadDemoBtn.addEventListener("click", async function () {
         const confirmed = window.confirm(
-          "Chỉ tiếp tục nếu backend và database local chỉ chứa dữ liệu giả. Vùng innerHTML cố ý không an toàn. Bạn có muốn tiếp tục?",
+          "Chỉ tiếp tục nếu database local chỉ chứa dữ liệu giả. Bạn có muốn tải bình luận?",
         );
 
         if (!confirmed) {
@@ -113,9 +113,9 @@
           secure.replaceChildren();
 
           for (const comment of result.data) {
-            const unsafeItem = document.createElement("p");
-            unsafeItem.innerHTML = comment.content;
-            vulnerable.appendChild(unsafeItem);
+            const previewItem = document.createElement("p");
+            previewItem.appendChild(createSafeXssPreview(comment.content));
+            vulnerable.appendChild(previewItem);
 
             const safeItem = document.createElement("p");
             safeItem.textContent = comment.content;

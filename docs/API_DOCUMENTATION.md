@@ -330,7 +330,7 @@ commentElement.innerHTML = comment.content;
 
 với dữ liệu người dùng không đáng tin cậy.
 
-Trong dự án này, khu vực XSS Vulnerable trên giao diện chính chỉ dùng để mô phỏng và giải thích nguy cơ, không thực thi mã JavaScript được nhập vào.
+Trong dự án này, preview XSS trên giao diện chính minh họa cách một số thẻ định dạng được diễn giải nhưng không dùng sink `innerHTML` trực tiếp. Chỉ các thẻ định dạng trong allow-list được dựng thành phần tử; thuộc tính và nội dung hoạt động không được đưa vào DOM. Vùng so sánh an toàn dùng `textContent`. Demo bình luận local cũng dùng cùng preview giới hạn khi tải dữ liệu từ `/api/comments`, vì vậy nội dung bình luận không được thực thi.
 
 ---
 
@@ -344,6 +344,12 @@ Trong dự án, SQL Injection Lab minh họa việc tìm kiếm người dùng t
 
 - **Vulnerable Mode:** Ghép trực tiếp dữ liệu đầu vào vào câu truy vấn SQL để minh họa nguy cơ.
 - **Secure Mode:** Sử dụng truy vấn tham số hóa (Parameterized Query) để ngăn dữ liệu đầu vào thay đổi logic SQL.
+
+Giao diện hiện mô phỏng đăng nhập bằng các endpoint `/login-vulnerable` và
+`/login-secure`, sử dụng tài khoản demo trong database. Endpoint vulnerable là
+mô phỏng cố ý không an toàn và chỉ được bật trong môi trường development; chỉ
+sử dụng dữ liệu local giả. Endpoint `/vulnerable` và `/secure` bên dưới vẫn giữ
+chức năng tìm kiếm username như mô tả trong các mục tương ứng.
 
 Hai API chỉ hoạt động khi `NODE_ENV=development` và sử dụng dữ liệu mẫu trong SQLite.
 
