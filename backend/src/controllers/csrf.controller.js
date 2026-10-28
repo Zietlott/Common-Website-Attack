@@ -46,20 +46,19 @@ function updateVulnerable(req, res) {
   });
 }
 
-
 function updateSecure(req, res) {
   const providedToken = req.get("X-CSRF-Token");
   const expectedToken = req.session.csrfToken;
 
-  // Check CSRF token
+  const providedBuffer = Buffer.from(providedToken || "", "utf8");
+  const expectedBuffer = Buffer.from(expectedToken || "", "utf8");
+
+  // Compare byte lengths before timingSafeEqual
   if (
     typeof providedToken !== "string" ||
     typeof expectedToken !== "string" ||
-    providedToken.length !== expectedToken.length ||
-    !crypto.timingSafeEqual(
-      Buffer.from(providedToken),
-      Buffer.from(expectedToken)
-    )
+    providedBuffer.length !== expectedBuffer.length ||
+    !crypto.timingSafeEqual(providedBuffer, expectedBuffer)
   ) {
     return res.status(403).json({
       success: false,
@@ -90,7 +89,6 @@ function updateSecure(req, res) {
     displayName: req.session.displayName,
   });
 }
-
 
 function getDemoState(req, res) {
   return res.status(200).json({

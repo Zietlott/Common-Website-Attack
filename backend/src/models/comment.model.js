@@ -1,8 +1,7 @@
-
 const db = require("../config/database");
 
-// Get all comments with usernames
-function findAll() {
+// Get comments with pagination and usernames
+function findAll(limit = 10, offset = 0) {
   const sql = `
     SELECT
       c.id,
@@ -13,9 +12,10 @@ function findAll() {
     FROM comments c
     JOIN users u ON c.user_id = u.id
     ORDER BY c.id ASC
+    LIMIT ? OFFSET ?
   `;
 
-  return db.prepare(sql).all();
+  return db.prepare(sql).all(limit, offset);
 }
 
 // Create a new comment

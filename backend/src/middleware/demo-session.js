@@ -6,7 +6,10 @@ const SqliteStore = require("better-sqlite3-session-store")(session);
 
 const sessionDbPath = path.resolve(
   __dirname,
-  "../../../database/sessions.db"
+  "../../../database",
+  process.env.NODE_ENV === "test"
+    ? "sessions_test.db"
+    : "sessions.db"
 );
 
 const sessionDb = new Database(sessionDbPath);

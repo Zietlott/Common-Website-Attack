@@ -1,6 +1,5 @@
 const demoSession = require("./middleware/demo-session");
 const csrfRoutes = require("./routes/csrf.routes");
-const sqlInjectionRoutes = require("./routes/sql-injection.routes");
 const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
@@ -8,6 +7,15 @@ const cors = require("cors");
 const userRoutes = require("./routes/user.routes");
 const commentRoutes = require("./routes/comment.routes");
 const authRoutes = require("./routes/auth.routes");
+
+if (
+  process.env.NODE_ENV === "production" &&
+  process.env.ENABLE_SECURITY_LABS === "true"
+) {
+  throw new Error(
+    "Security Labs must not be enabled in production"
+  );
+}
 
 const app = express();
 const frontendOrigin = new URL(
@@ -58,13 +66,24 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/comments", commentRoutes);
 
+
+
 // SQL Injection Lab
-if (process.env.NODE_ENV === "development") {
+if (
+  process.env.NODE_ENV === "development" &&
+  process.env.ENABLE_SECURITY_LABS === "true"
+) {
+  const sqlInjectionRoutes = require("./routes/sql-injection.routes");
+
   app.use("/api/labs/sqli", sqlInjectionRoutes);
 }
 
+
 // CSRF Lab
-if (process.env.NODE_ENV === "development") {
+if (
+  process.env.NODE_ENV === "development" &&
+  process.env.ENABLE_SECURITY_LABS === "true"
+) {
   app.use("/api/labs/csrf", csrfRoutes);
 }
 
@@ -78,7 +97,11 @@ app.use((req, res) => {
 
 // Centralized error handler
 app.use((err, req, res, next) => {
-  console.error("Backend error:", err);
+  if (process.env.NODE_ENV !== "production") {
+    console.error("Backend error:", err);
+  } else {
+    console.error("Internal server error");
+  }
 
   return res.status(500).json({
     success: false,

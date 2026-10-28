@@ -1,4 +1,3 @@
-
 const express = require("express");
 
 const {
@@ -6,7 +5,12 @@ const {
   getUserById,
 } = require("../controllers/user.controller");
 
+const requireAuth = require("../middleware/require-auth");
+
 const router = express.Router();
+
+// Require authentication for all user APIs
+router.use(requireAuth);
 
 // GET /api/users
 router.get("/", getAllUsers);
