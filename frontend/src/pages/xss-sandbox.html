@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- CSP hashes allow only this lab script and its fixed harmless payload. -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; base-uri 'none'; object-src 'none'; script-src 'sha256-WUQdm5rJuh88lDjv4WT33NkSEONK9XweQGdXzoCfMmk=' 'unsafe-hashes' 'sha256-ohFhmqB0kFvPvyA586wMQs+/E9Ehe3wl33qAQIEVc+Q='; style-src 'unsafe-inline'; img-src data:; media-src 'none'; connect-src 'none'; frame-src 'none'; form-action 'none'"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ShopViet — trang sản phẩm giả lập</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: system-ui, sans-serif;
+        color: #172033;
+        background: #f5f7fa;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 16px;
+      }
+
+      .shop {
+        max-width: 860px;
+        margin: 0 auto;
+        overflow: hidden;
+        border: 1px solid #dfe5ec;
+        border-radius: 12px;
+        background: #fff;
+      }
+
+      .shop-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 13px 18px;
+        border-bottom: 1px solid #e8edf2;
+      }
+
+      .brand {
+        color: #155e75;
+        font-size: 1.05rem;
+        font-weight: 800;
+      }
+
+      .cart {
+        color: #475569;
+        font-size: 0.88rem;
+      }
+
+      .cart-count {
+        display: inline-grid;
+        width: 24px;
+        height: 24px;
+        margin-left: 4px;
+        place-items: center;
+        border-radius: 50%;
+        background: #e2e8f0;
+        color: #334155;
+        font-weight: 700;
+      }
+
+      .shop-nav {
+        display: flex;
+        gap: 18px;
+        padding: 9px 18px;
+        border-bottom: 1px solid #e8edf2;
+        color: #64748b;
+        font-size: 0.8rem;
+      }
+
+      .shop-content {
+        padding: 18px;
+      }
+
+      .breadcrumb {
+        margin: 0 0 14px;
+        color: #64748b;
+        font-size: 0.76rem;
+      }
+
+      .product {
+        display: grid;
+        grid-template-columns: minmax(150px, 0.8fr) minmax(0, 1.2fr);
+        gap: 18px;
+      }
+
+      .product-image {
+        display: grid;
+        min-height: 190px;
+        place-items: center;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        background: #f8fafc;
+        color: #94a3b8;
+        font-size: 3rem;
+      }
+
+      .product-category {
+        color: #64748b;
+        font-size: 0.7rem;
+        font-weight: 750;
+        letter-spacing: 0.06em;
+      }
+
+      h1 {
+        margin: 7px 0;
+        font-size: 1.18rem;
+      }
+
+      .rating,
+      .product-state {
+        color: #64748b;
+        font-size: 0.82rem;
+      }
+
+      .price {
+        display: block;
+        margin-top: 12px;
+        color: #0f172a;
+        font-size: 1.18rem;
+      }
+
+      .buy-button {
+        min-height: 38px;
+        margin-top: 12px;
+        padding: 8px 14px;
+        border: 0;
+        border-radius: 7px;
+        background: #0e7490;
+        color: #fff;
+        font: inherit;
+        font-size: 0.85rem;
+        font-weight: 700;
+      }
+
+      .attack-offer {
+        margin-top: 12px;
+        padding: 11px 12px;
+        border: 1px solid #fed7aa;
+        border-radius: 8px;
+        background: #fffaf3;
+        color: #7c2d12;
+        font-size: 0.84rem;
+        line-height: 1.5;
+      }
+
+      .attack-offer[hidden] {
+        display: none;
+      }
+
+      .reviews,
+      .search-result,
+      .dom-result {
+        margin-top: 18px;
+        padding-top: 16px;
+        border-top: 1px solid #e8edf2;
+      }
+
+      .reviews h2,
+      .search-result h2,
+      .dom-result h2 {
+        margin: 0 0 9px;
+        font-size: 0.92rem;
+      }
+
+      .review {
+        padding: 10px 0;
+      }
+
+      .review + .review {
+        border-top: 1px solid #edf1f5;
+      }
+
+      .review-author {
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+
+      .review-body {
+        margin: 5px 0 0;
+        overflow-wrap: anywhere;
+        color: #475569;
+        font-size: 0.84rem;
+        line-height: 1.5;
+      }
+
+      .query-label {
+        color: #64748b;
+        font-size: 0.78rem;
+      }
+
+      .sandbox-status {
+        margin: 14px 0 0;
+        color: #64748b;
+        font-size: 0.75rem;
+      }
+
+      @media (max-width: 520px) {
+        body {
+          padding: 8px;
+        }
+
+        .shop-content {
+          padding: 13px;
+        }
+
+        .product {
+          grid-template-columns: 1fr;
+        }
+
+        .product-image {
+          min-height: 130px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shop">
+      <header class="shop-header">
+        <span class="brand">ShopViet</span>
+        <span class="cart">Giỏ hàng <span id="cartCount" class="cart-count">0</span></span>
+      </header>
+      <nav class="shop-nav" aria-label="Danh mục">
+        <span>Trang chủ</span>
+        <span>Điện gia dụng</span>
+        <span>Khuyến mãi</span>
+      </nav>
+      <section class="shop-content">
+        <p class="breadcrumb">Trang chủ / Điện gia dụng / Máy xay</p>
+        <article class="product">
+          <div class="product-image" aria-label="Ảnh sản phẩm minh họa">▧</div>
+          <div>
+            <span class="product-category">ĐIỆN GIA DỤNG</span>
+            <h1>Máy xay đa năng ShopViet</h1>
+            <p class="rating">★★★★★ · 128 đánh giá</p>
+            <p class="product-state" id="productState">Còn hàng · Giao dự kiến ngày mai</p>
+            <strong class="price">1.290.000 ₫</strong>
+            <button type="button" class="buy-button" disabled>Thêm vào giỏ</button>
+            <aside id="attackOffer" class="attack-offer" hidden>
+              Mã giảm giá 90% đã được áp dụng! Ưu đãi này chỉ là nội dung giả
+              của mô phỏng; không có giao dịch hay tài khoản thật.
+            </aside>
+          </div>
+        </article>
+        <section id="searchResult" class="search-result" hidden>
+          <h2>Kết quả tìm kiếm</h2>
+          <p class="query-label">Từ khóa:</p>
+          <p id="searchQuery" class="review-body"></p>
+          <div id="searchSink"></div>
+        </section>
+        <section id="domResult" class="dom-result" hidden>
+          <h2>Thông tin link chia sẻ</h2>
+          <div id="domSink"></div>
+        </section>
+        <section id="reviews" class="reviews" hidden>
+          <h2>Đánh giá của khách hàng</h2>
+          <article class="review">
+            <span class="review-author">Khách hàng ShopViet</span>
+            <div id="reviewSink" class="review-body"></div>
+          </article>
+        </section>
+        <p id="sandboxStatus" class="sandbox-status" role="status">
+          Đang mở trang sản phẩm...
+        </p>
+      </section>
+    </main>
+
+    <script>
+      (function () {
+        const expectedPayload =
+          `<img src="data:image/png;base64,AAAA" onerror="document.getElementById('cartCount').textContent='1'; document.getElementById('attackOffer').hidden=false; document.getElementById('productState').textContent='Ưu đãi đã được áp dụng'; window.parent.postMessage({source:'xss-sandbox',state:'executed',type:new URLSearchParams(location.search).get('type'),run:new URLSearchParams(location.search).get('run')},'*')">`;
+        const status = document.getElementById("sandboxStatus");
+        const parameters = new URLSearchParams(window.location.search);
+        const type = parameters.get("type");
+        const run = parameters.get("run");
+        let payload = "";
+        let sink;
+
+        if (window.parent === window) {
+          status.textContent = "Trang giả lập chỉ chạy bên trong lab XSS.";
+          return;
+        }
+
+        if (type === "reflected") {
+          payload = new URLSearchParams(window.location.search).get("q") || "";
+          document.getElementById("searchResult").hidden = false;
+          document.getElementById("searchQuery").textContent = payload;
+          sink = document.getElementById("searchSink");
+        } else if (type === "stored") {
+          payload = new URLSearchParams(window.location.search).get("comment") || "";
+          document.getElementById("reviews").hidden = false;
+          sink = document.getElementById("reviewSink");
+        } else if (type === "dom") {
+          payload =
+            new URLSearchParams(window.location.hash.slice(1)).get("message") || "";
+          document.getElementById("domResult").hidden = false;
+          sink = document.getElementById("domSink");
+        }
+
+        if (
+          !["reflected", "stored", "dom"].includes(type) ||
+          !run ||
+          !/^\d+$/.test(run) ||
+          payload !== expectedPayload ||
+          !sink
+        ) {
+          status.textContent = "Không có payload mô phỏng hợp lệ trong URL.";
+          return;
+        }
+
+        sink.innerHTML = payload;
+        status.textContent =
+          type === "reflected"
+            ? "Trang tìm kiếm đã phản chiếu dữ liệu từ request."
+            : type === "stored"
+              ? "Trang sản phẩm đã tải bình luận đã lưu."
+              : "JavaScript đã đọc fragment URL và cập nhật DOM.";
+      })();
+    </script>
+  </body>
+</html>

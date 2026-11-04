@@ -3,227 +3,250 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' http://localhost:3000 http://127.0.0.1:3000; frame-src 'self' http://localhost:3000 http://127.0.0.1:3000; form-action 'self' http://localhost:3000 http://127.0.0.1:3000"
+    />
 
     <title>CSRF Lab | Web Security Lab</title>
 
     <link rel="stylesheet" href="../css/global.css" />
     <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="../css/security-simulation.css" />
     <link rel="stylesheet" href="../css/csrf.css" />
   </head>
 
   <body data-page="csrf" data-title="CSRF Lab">
     <div class="app">
-      <!-- Sidebar -->
       <div id="sidebar-container"></div>
 
       <main class="main-content">
-        <!-- Header -->
         <div id="header-container"></div>
 
         <section class="content csrf-content">
-          <!-- Page heading -->
           <div class="page-heading">
             <span class="eyebrow-blue">WEB SECURITY / LAB 02</span>
-
             <h1>Cross-Site Request Forgery (CSRF)</h1>
-
             <p>
-              Tìm hiểu cách một website có thể bị lợi dụng để gửi yêu cầu ngoài
-              ý muốn bằng phiên đăng nhập của người dùng.
+              Kẻ tấn công lợi dụng phiên đăng nhập của bạn để gửi một thao tác
+              mà bạn không hề xác nhận.
             </p>
           </div>
 
-          <!-- Concept -->
-          <section class="lab-panel">
-            <h2>CSRF hoạt động như thế nào?</h2>
-
-            <ol class="csrf-flow">
-              <li>
-                <strong>Người dùng đăng nhập:</strong>
-                người dùng đăng nhập vào một website.
-              </li>
-
-              <li>
-                <strong>Phiên đăng nhập được duy trì:</strong>
-                trình duyệt lưu thông tin cần thiết để duy trì phiên.
-              </li>
-
-              <li>
-                <strong>Truy cập trang khác:</strong>
-                người dùng truy cập một trang không đáng tin cậy.
-              </li>
-
-              <li>
-                <strong>Yêu cầu ngoài ý muốn:</strong>
-                nếu ứng dụng thiếu biện pháp bảo vệ, trình duyệt có thể gửi yêu
-                cầu đến website đang đăng nhập.
-              </li>
-            </ol>
-
-            <div class="csrf-info">
-              <strong>Lưu ý:</strong>
-              Đây là mô tả khái niệm, không phải một cuộc tấn công thực tế.
-              Trình duyệt và ứng dụng có nhiều cơ chế có thể ngăn chặn tình
-              huống này.
+          <section class="lab-panel csrf-guide" aria-labelledby="csrfGuideTitle">
+            <h2 id="csrfGuideTitle">CSRF hoạt động như thế nào?</h2>
+            <div class="csrf-guide-grid">
+              <article class="csrf-guide-card">
+                <h3>Kịch bản ngân hàng</h3>
+                <ol>
+                  <li>Bạn đăng nhập ngân hàng và trình duyệt giữ cookie phiên.</li>
+                  <li>Bạn mở một trang giả mạo có form “nhận quà”.</li>
+                  <li>Trang đó gửi POST chuyển tiền; trình duyệt tự đính kèm cookie.</li>
+                  <li>Server thiếu kiểm tra nên tưởng đây là yêu cầu của bạn.</li>
+                </ol>
+              </article>
+              <article class="csrf-guide-card">
+                <h3>Vì sao SOP không đủ?</h3>
+                <p>
+                  Same-Origin Policy thường chặn trang lạ đọc phản hồi, nhưng
+                  không ngăn mọi form gửi yêu cầu. Vì vậy, server cần xác minh
+                  người dùng thật sự khởi tạo thao tác.
+                </p>
+              </article>
+              <article class="csrf-guide-card">
+                <h3>Cách phòng thủ</h3>
+                <ul>
+                  <li><strong>CSRF token:</strong> token gắn với phiên, gửi trong header riêng; thiếu hoặc sai thì trả 403.</li>
+                  <li><strong>SameSite và Origin:</strong> giảm/chặn request từ site khác; dùng như lớp bổ sung.</li>
+                  <li><strong>Xác nhận giao dịch:</strong> yêu cầu xác thực lại cho thao tác nhạy cảm.</li>
+                </ul>
+              </article>
             </div>
+            <p class="csrf-guide-note">
+              Người dùng nên cảnh giác link lạ, đăng xuất trên thiết bị dùng
+              chung và bật MFA. Tuy nhiên, phòng thủ CSRF chính vẫn thuộc về server.
+            </p>
           </section>
 
-          <!-- Simulation -->
-          <section class="lab-panel csrf-simulation">
-            <div class="lab-heading">
-              <h2>Mô phỏng nhận diện yêu cầu</h2>
+          <section class="lab-panel csrf-demo security-simulation" aria-labelledby="csrfLabTitle">
+            <header class="security-simulation-header">
+              <div>
+                <h2 id="csrfLabTitle">Mô phỏng giao dịch trong ngân hàng giả lập</h2>
+                <p>
+                  Theo dõi số dư demo trước và sau khi trang giả gửi form; thử
+                  cùng request trên endpoint đã bật token.
+                </p>
+              </div>
+              <span class="security-simulation-kicker">CSRF / LOCAL LAB</span>
+            </header>
 
-              <p>
-                Hãy chọn yêu cầu nào có dấu hiệu cần được bảo vệ bằng CSRF token
-                hoặc cơ chế xác thực tương đương.
-              </p>
-            </div>
+            <div class="security-simulation-body">
+              <div class="csrf-session-actions">
+                <button type="button" id="csrfStartBtn" class="primary-btn">
+                  Đăng nhập ngân hàng demo
+                </button>
+                <button type="button" id="csrfStateBtn" class="secondary-btn">
+                  Làm mới số dư
+                </button>
+                <span id="csrfTokenState" class="csrf-token-state">Chưa có phiên</span>
+              </div>
 
-            <div class="csrf-options">
-              <!-- Request A -->
-              <article class="lab-card csrf-card">
-                <div class="csrf-card-number">A</div>
-
-                <div class="csrf-card-content">
-                  <h3>Xem thông tin công khai</h3>
-
-                  <p>Đọc một trang giới thiệu không làm thay đổi dữ liệu.</p>
-
-                  <button
-                    type="button"
-                    class="primary-btn csrf-analyze-btn"
-                    data-request="A"
-                  >
-                    Phân tích yêu cầu A
-                  </button>
+              <section class="csrf-bank-card" aria-label="Tài khoản ngân hàng giả lập">
+                <div class="csrf-bank-heading">
+                  <div>
+                    <span class="csrf-bank-kicker">NGÂN HÀNG GIẢ LẬP</span>
+                    <h3>Tài khoản của bạn</h3>
+                  </div>
+                  <span class="csrf-bank-account">•••• 2048</span>
                 </div>
-              </article>
+                <div class="csrf-bank-balance">
+                  <span>Số dư khả dụng</span>
+                  <strong id="csrfBalance">—</strong>
+                </div>
+                <p id="csrfLastTransfer" class="csrf-last-transfer">
+                  Chưa có giao dịch trong phiên này.
+                </p>
+              </section>
 
-              <!-- Request B -->
-              <article class="lab-card csrf-card">
-                <div class="csrf-card-number">B</div>
+              <div class="csrf-transfer-controls">
+                <h3>Giao dịch mà trang giả muốn gửi</h3>
+                <div class="csrf-transfer-grid">
+                  <div class="form-group">
+                    <label for="csrfRecipient">Tài khoản nhận giả</label>
+                    <input
+                      type="text"
+                      id="csrfRecipient"
+                      inputmode="numeric"
+                      maxlength="16"
+                      value="9988776655"
+                      autocomplete="off"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="csrfAmount">Số tiền giả lập (VND)</label>
+                    <input
+                      type="number"
+                      id="csrfAmount"
+                      min="1"
+                      max="5000000"
+                      step="10000"
+                      value="500000"
+                    />
+                  </div>
+                </div>
+              </div>
 
-                <div class="csrf-card-content">
-                  <h3>Thay đổi thông tin tài khoản</h3>
-
+              <section class="csrf-attacker-page" aria-labelledby="csrfAttackerTitle">
+                <div class="csrf-attacker-topbar">
+                  <span>happygift.example</span>
+                  <span>Trang ngoài ngân hàng</span>
+                </div>
+                <div class="csrf-attacker-content">
+                  <span class="csrf-attacker-label">BẠN ĐÃ ĐƯỢC CHỌN</span>
+                  <h3 id="csrfAttackerTitle">Nhận ngay quà tặng của bạn</h3>
                   <p>
-                    Gửi yêu cầu cập nhật một thiết lập quan trọng của tài khoản.
+                    Nút này giả lập một trang lừa đảo gửi form chuyển tiền trong
+                    khi bạn vẫn đăng nhập ngân hàng.
                   </p>
-
-                  <button
-                    type="button"
-                    class="primary-btn csrf-analyze-btn"
-                    data-request="B"
+                  <form
+                    id="csrfAttackForm"
+                    method="post"
+                    enctype="application/x-www-form-urlencoded"
+                    target="csrfAttackResponse"
                   >
-                    Phân tích yêu cầu B
-                  </button>
+                    <input type="hidden" name="recipient" id="csrfFormRecipient" />
+                    <input type="hidden" name="amount" id="csrfFormAmount" />
+                    <button
+                      type="submit"
+                      id="csrfVulnerableBtn"
+                      class="primary-btn"
+                      disabled
+                    >
+                      Mở trang nhận quà
+                    </button>
+                  </form>
                 </div>
-              </article>
-            </div>
+              </section>
 
-            <!-- Result -->
-            <div
-              id="csrfResult"
-              class="output-box csrf-result"
-              aria-live="polite"
-            >
-              Chọn một yêu cầu để xem phân tích.
-            </div>
-          </section>
+              <section class="csrf-defense-flow" aria-labelledby="csrfDefenseTitle">
+                <div>
+                  <span class="csrf-flow-kicker">CÙNG FORM, ENDPOINT ĐÃ BẢO VỆ</span>
+                  <h3 id="csrfDefenseTitle">Server yêu cầu token phiên</h3>
+                  <p>
+                    Form của trang giả không thể tự thêm header
+                    <code>X-CSRF-Token</code>; server phải từ chối và giữ nguyên số dư.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  id="csrfMissingTokenBtn"
+                  class="secondary-btn security-action-safe"
+                  disabled
+                >
+                  Thử form giả khi đã bật token
+                </button>
+              </section>
 
-          <!-- Interactive CSRF Demo -->
-          <section class="lab-panel csrf-demo">
-            <div class="lab-heading">
-              <h2>Demo kiểm tra CSRF token</h2>
-              <p>
-                Khởi tạo session local rồi so sánh hai endpoint cập nhật
-                display name: endpoint vulnerable chấp nhận request có session
-                mà không kiểm tra token; endpoint secure chỉ cập nhật khi token
-                trong header hợp lệ.
+              <section class="csrf-legitimate-flow" aria-labelledby="csrfLegitimateTitle">
+                <div>
+                  <span class="csrf-flow-kicker">THAO TÁC THẬT TRONG NGÂN HÀNG</span>
+                  <h3 id="csrfLegitimateTitle">Token hợp lệ cho phép giao dịch</h3>
+                  <p>
+                    Ngân hàng gửi token gắn với phiên trong header riêng; server
+                    xác minh token rồi mới cập nhật số dư.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  id="csrfSecureBtn"
+                  class="primary-btn"
+                  disabled
+                >
+                  Xác nhận chuyển tiền có token
+                </button>
+              </section>
+
+              <iframe
+                class="csrf-response-frame"
+                name="csrfAttackResponse"
+                title="Phản hồi request CSRF mô phỏng"
+                aria-hidden="true"
+                tabindex="-1"
+              ></iframe>
+
+              <p
+                id="csrfDemoStatus"
+                class="security-simulation-status"
+                role="status"
+                aria-live="polite"
+              >
+                Đăng nhập phiên demo để bắt đầu.
+              </p>
+              <p id="csrfDemoSummary" class="csrf-demo-summary" aria-live="polite">
+                Toàn bộ giao dịch chỉ thay đổi số dư giả trong session local.
+              </p>
+
+              <details class="csrf-response-details">
+                <summary>Chi tiết request và trạng thái server</summary>
+                <pre id="csrfDemoResult" class="output-box" aria-live="polite">Chưa có kết quả.</pre>
+              </details>
+
+              <p class="simulation-safety-note">
+                Không có ngân hàng, tài khoản hay tiền thật. Hai cổng localhost
+                khác origin nhưng cùng site; bài lab không giả lập việc SameSite
+                chặn cookie từ một domain Internet bên ngoài.
               </p>
             </div>
-
-            <div class="csrf-info">
-              <strong>Phạm vi và giới hạn:</strong>
-              Đây là so sánh kiểm tra token ở hai endpoint, không phải mô phỏng
-              đầy đủ một cuộc tấn công cross-site trên trình duyệt. Cả hai
-              request của trang demo gửi session cookie; cookie được cấu hình
-              <code>SameSite=Lax</code> và môi trường hiện tại dùng HTTP local.
-              CORS chỉ giới hạn origin được phép đọc response trong trình
-              duyệt, không thay thế CSRF token hoặc các biện pháp chống CSRF.
-              API lab chỉ bật ở chế độ development.
-            </div>
-
-            <div class="form-actions">
-              <button type="button" id="csrfStartBtn" class="primary-btn">
-                Khởi tạo phiên demo
-              </button>
-
-              <button type="button" id="csrfStateBtn" class="secondary-btn">
-                Xem trạng thái phiên
-              </button>
-            </div>
-
-            <div class="form-group">
-              <label for="csrfDisplayName">Tên hiển thị mới</label>
-              <input
-                type="text"
-                id="csrfDisplayName"
-                maxlength="100"
-                placeholder="Ví dụ: Demo User"
-                autocomplete="off"
-              />
-            </div>
-
-            <div class="form-actions">
-              <button type="button" id="csrfVulnerableBtn" class="primary-btn">
-                Gửi request vulnerable (không kiểm tra token)
-              </button>
-
-              <button type="button" id="csrfSecureBtn" class="secondary-btn">
-                Gửi request secure (có token)
-              </button>
-            </div>
-
-            <p id="csrfDemoStatus" role="status" aria-live="polite">
-              Hãy khởi tạo phiên demo trước khi gửi yêu cầu.
-            </p>
-
-            <p>
-              Kết quả thành công ở endpoint vulnerable cho biết session hợp lệ
-              là đủ để endpoint này cập nhật tên. Endpoint secure trả về thành
-              công khi token đúng; token thiếu hoặc sai sẽ bị từ chối với HTTP
-              403. Các kết quả này chỉ thể hiện hành vi của hai endpoint trong
-              cấu hình demo hiện tại.
-            </p>
-
-            <div>
-              <h3>Kết quả từ Backend</h3>
-              <pre id="csrfDemoResult" class="output-box" aria-live="polite">
-Chưa có kết quả.</pre
-              >
-            </div>
           </section>
 
-          <!-- Protection -->
-          <section class="lab-panel">
-            <h2>Biện pháp phòng chống</h2>
-
-            <ul class="protection-list">
-              <li>Sử dụng CSRF token được xác minh ở phía máy chủ.</li>
-
-              <li>Cấu hình cookie với thuộc tính SameSite phù hợp.</li>
-
-              <li>Kiểm tra Origin hoặc Referer khi thích hợp.</li>
-
-              <li>Không sử dụng yêu cầu GET để thay đổi dữ liệu.</li>
-
-              <li>Yêu cầu xác nhận bổ sung đối với hành động nhạy cảm.</li>
-            </ul>
-          </section>
+          <p class="csrf-reference">
+            Tham khảo:
+            <a href="https://owasp.org/www-community/attacks/csrf" target="_blank" rel="noopener noreferrer">
+              OWASP — Cross-Site Request Forgery (CSRF)
+            </a>
+          </p>
         </section>
 
-        <!-- Footer -->
         <div id="footer-container"></div>
       </main>
     </div>

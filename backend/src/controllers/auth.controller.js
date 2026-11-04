@@ -1,4 +1,5 @@
 const bcrypt = require("bcryptjs");
+const crypto = require("node:crypto");
 const UserModel = require("../models/user.model");
 
 // POST /api/auth/login
@@ -36,6 +37,7 @@ async function login(req, res, next) {
 
       // Separate real authentication from CSRF demo identity
       req.session.authUserId = user.id;
+      req.session.csrfToken = crypto.randomBytes(32).toString("hex");
 
       req.session.save((saveErr) => {
         if (saveErr) return next(saveErr);
@@ -48,6 +50,7 @@ async function login(req, res, next) {
             username: user.username,
             email: user.email,
           },
+          csrfToken: req.session.csrfToken,
         });
       });
     });

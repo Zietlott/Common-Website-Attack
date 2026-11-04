@@ -1,16 +1,17 @@
 const session = require("express-session");
 const Database = require("better-sqlite3");
+const fs = require("node:fs");
+const os = require("node:os");
 const path = require("node:path");
 
 const SqliteStore = require("better-sqlite3-session-store")(session);
 
-const sessionDbPath = path.resolve(
-  __dirname,
-  "../../../database",
-  process.env.NODE_ENV === "test"
-    ? "sessions_test.db"
-    : "sessions.db"
-);
+const sessionDbPath = process.env.NODE_ENV === "test"
+  ? path.resolve(__dirname, "../../../database/sessions_test.db")
+  : process.env.SESSION_DB_PATH ||
+    path.join(os.tmpdir(), "common-website-attack", "sessions.db");
+
+fs.mkdirSync(path.dirname(sessionDbPath), { recursive: true });
 
 const sessionDb = new Database(sessionDbPath);
 

@@ -1,4 +1,3 @@
-
 const Database = require("better-sqlite3");
 const path = require("node:path");
 
@@ -9,10 +8,7 @@ if (
   throw new Error("Security Lab database is disabled");
 }
 
-const dbPath = path.resolve(
-  __dirname,
-  "../../../database/security_lab_demo.db"
-);
+const dbPath = path.resolve(__dirname, "../../../database/security_lab.db");
 
 const db = new Database(dbPath, {
   fileMustExist: true,

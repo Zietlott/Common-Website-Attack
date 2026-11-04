@@ -3,6 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' http://localhost:3000 http://127.0.0.1:3000; form-action 'self'"
+    />
 
     <title>Security Guide | Web Security Lab</title>
 
@@ -52,7 +56,9 @@
                 </li>
                 <li>
                   Dùng Content Security Policy (CSP) như một lớp phòng vệ bổ
-                  sung, không thay thế mã hóa đầu ra.
+                  sung, không thay thế mã hóa đầu ra. Trang frontend hiện dùng
+                  CSP meta cho môi trường local; khi triển khai, đặt policy
+                  trong response header tại web server/static host.
                 </li>
               </ul>
             </div>
@@ -143,6 +149,11 @@
                   Cấu hình CSP phù hợp, <code>X-Content-Type-Options</code>,
                   <code>Referrer-Policy</code> và chính sách
                   <code>frame-ancestors</code> để bổ sung các lớp bảo vệ.
+                  Các trang frontend hiện có CSP meta cho môi trường local;
+                  khi triển khai cần cấu hình CSP dưới dạng response header ở
+                  máy chủ static. Meta policy không thay thế được
+                  <code>frame-ancestors</code>. CSP của Helmet backend vẫn tắt
+                  vì backend không phục vụ HTML frontend.
                 </li>
                 <li>
                   Bảo vệ cookie phiên bằng các thuộc tính
@@ -154,6 +165,43 @@
                   thông tin nhạy cảm trong lỗi hoặc log.
                 </li>
               </ul>
+            </div>
+          </section>
+
+          <section class="lab-panel guide-section practical-map">
+            <div class="guide-number">LAB</div>
+            <div class="guide-content">
+              <h2>Trong project này, phần nào đang được bảo vệ thật?</h2>
+              <ul>
+                <li>
+                  <strong>XSS:</strong> bình luận được lưu qua API local có
+                  xác thực và CSRF token. Khi đọc, giao diện dùng
+                  <code>textContent</code> hoặc renderer chỉ cho phép thẻ định
+                  dạng; không chạy mã trong bình luận.
+                </li>
+                <li>
+                  <strong>SQL Injection:</strong> chế độ secure thực sự dùng
+                  truy vấn tham số hóa và xác minh mật khẩu bằng bcrypt. Chế độ
+                  vulnerable chỉ bật trong backend development local để so
+                  sánh; không nhập payload hoặc dùng dữ liệu thật.
+                </li>
+                <li>
+                  <strong>CSRF:</strong> API tạo bình luận yêu cầu session và
+                  token CSRF được kiểm tra ở backend. Lab CSRF riêng cho xem
+                  trực tiếp sự khác nhau giữa endpoint kiểm tra token và endpoint
+                  cố ý bỏ qua token; nó không tự tạo cuộc tấn công cross-site.
+                </li>
+                <li>
+                  <strong>Phishing:</strong> đây là bài thực hành nhận diện và
+                  chọn cách phản ứng. Tên miền <code>.example</code> là giả lập;
+                  không có liên kết ngoài hoặc biểu mẫu thu thập thông tin.
+                </li>
+              </ul>
+              <p>
+                Các biện pháp trong project là ví dụ học tập, không thay thế
+                đánh giá bảo mật, cấu hình HTTPS, quản lý bí mật và kiểm thử
+                trước khi triển khai một ứng dụng production.
+              </p>
             </div>
           </section>
 

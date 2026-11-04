@@ -42,12 +42,7 @@ function searchSecure(username) {
 }
 
 function loginVulnerable(username, password) {
-  const sql = `
-    SELECT id, username, email
-    FROM users
-    WHERE username = '${username}'
-      AND bcrypt_compare('${password}', password) = 1
-  `;
+  const sql = `SELECT id, username, email FROM users WHERE username = '${username}' AND bcrypt_compare('${password}', password) = 1`;
 
   return db.prepare(sql).get();
 }

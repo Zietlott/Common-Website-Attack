@@ -3,18 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; form-action 'self'"
+    />
     <title>Phishing Lab | Web Security Lab</title>
-
     <link rel="stylesheet" href="../css/global.css" />
     <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="../css/security-simulation.css" />
     <link rel="stylesheet" href="../css/phising.css" />
   </head>
 
   <body data-page="phising" data-title="Phishing Lab">
     <div class="app">
       <div id="sidebar-container"></div>
-
       <main class="main-content">
         <div id="header-container"></div>
 
@@ -23,164 +25,188 @@
             <span class="eyebrow-blue">WEB SECURITY / LAB 04</span>
             <h1>Phishing</h1>
             <p>
-              Học cách nhận diện website giả mạo và bảo vệ thông tin đăng nhập
-              trước những yêu cầu đáng ngờ.
+              Theo dấu email giả đến trang đăng nhập giả lập, rồi thử cách
+              nhận diện và xử lý an toàn.
             </p>
           </div>
 
-          <section class="lab-panel">
-            <h2>Phishing là gì?</h2>
-            <p>
-              Phishing là hình thức lừa đảo thường sử dụng email, tin nhắn hoặc
-              website giả mạo để đánh lừa người dùng tiết lộ thông tin hoặc
-              thực hiện hành động không an toàn.
-            </p>
-            <div class="phishing-info">
-              <strong>Mục tiêu bài lab:</strong>
-              kiểm tra địa chỉ website, nội dung yêu cầu và dấu hiệu gây áp lực
-              trước khi tin tưởng một trang đăng nhập.
+          <section class="lab-panel phishing-guide" aria-labelledby="phishingGuideTitle">
+            <h2 id="phishingGuideTitle">Phishing là gì?</h2>
+            <div class="phishing-guide-grid">
+              <article class="phishing-guide-card">
+                <h3>Kịch bản thường gặp</h3>
+                <ol>
+                  <li>Kẻ gian giả danh ngân hàng hoặc dịch vụ bạn biết.</li>
+                  <li>Email tạo cảm giác khẩn cấp và dụ bạn bấm link.</li>
+                  <li>Trang giả bắt chước trang đăng nhập quen thuộc.</li>
+                  <li>Nếu nhập thông tin thật, kẻ gian có thể thử chiếm tài khoản.</li>
+                </ol>
+              </article>
+              <article class="phishing-guide-card">
+                <h3>Dấu hiệu cần dừng lại</h3>
+                <ul>
+                  <li>Địa chỉ người gửi và tên miền link không khớp.</li>
+                  <li>Đe dọa khóa tài khoản hoặc thúc ép trong thời gian ngắn.</li>
+                  <li>Trang yêu cầu mật khẩu, mã OTP hoặc thông tin nhạy cảm bất thường.</li>
+                </ul>
+              </article>
+              <article class="phishing-guide-card">
+                <h3>Cách phòng tránh</h3>
+                <ul>
+                  <li>Không mở link trong tin nhắn bất ngờ; tự mở ứng dụng/trang chính thức.</li>
+                  <li>Kiểm tra toàn bộ tên miền; biểu tượng khóa HTTPS không chứng minh trang là thật.</li>
+                  <li>Không chia sẻ OTP; bật MFA và báo cáo email đáng ngờ.</li>
+                </ul>
+              </article>
             </div>
+            <p class="phishing-guide-note">
+              Nếu lỡ gửi thông tin thật: dùng kênh chính thức để đổi mật khẩu,
+              thu hồi phiên đăng nhập, báo ngân hàng/dịch vụ và liên hệ bộ phận
+              hỗ trợ. Không trả lời hoặc dùng link trong email đáng ngờ.
+            </p>
           </section>
 
-          <section class="lab-panel phishing-simulation">
-            <div class="lab-heading">
-              <h2>Thực hành nhận diện website giả mạo</h2>
-              <p>
-                Kiểm tra trang đăng nhập giả lập dưới đây. Không nhập thông tin
-                thật; các trường và nút chỉ là hình minh họa, không gửi dữ liệu.
-              </p>
-            </div>
-
-            <div class="phishing-site" aria-label="Trang đăng nhập giả lập">
-              <div class="phishing-browser-bar">
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-                <div class="phishing-address">
-                  <span class="phishing-lock">!</span>
-                  login.websecure-account.example/verify
-                </div>
-              </div>
-
-              <div class="phishing-site-body">
-                <div class="phishing-site-brand">
-                  <span class="phishing-brand-mark" aria-hidden="true">W</span>
-                  <span>WebSecure</span>
-                </div>
-
-                <div class="phishing-alert">
-                  <strong>Yêu cầu xác minh khẩn cấp</strong>
-                  <span>Tài khoản sẽ bị khóa sau 10 phút nếu chưa xác minh.</span>
-                </div>
-
-                <div class="phishing-login-card">
-                  <h3>Đăng nhập để tiếp tục</h3>
-                  <p>
-                    Nhập mật khẩu và mã OTP để xác minh danh tính ngay bây giờ.
-                  </p>
-
-                  <label for="phishingMockEmail">Email hoặc tên đăng nhập</label>
-                  <input
-                    id="phishingMockEmail"
-                    type="text"
-                    placeholder="name@example.com"
-                    disabled
-                  />
-
-                  <label for="phishingMockPassword">Mật khẩu</label>
-                  <input
-                    id="phishingMockPassword"
-                    type="password"
-                    placeholder="Không nhập thông tin thật"
-                    disabled
-                  />
-
-                  <label for="phishingMockOtp">Mã OTP</label>
-                  <input
-                    id="phishingMockOtp"
-                    type="text"
-                    placeholder="Không nhập mã xác minh"
-                    disabled
-                  />
-
-                  <button class="phishing-mock-submit" type="button" disabled>
-                    Xác minh ngay
-                  </button>
-                </div>
-
-                <p class="phishing-simulation-note">
-                  Đây là giao diện minh họa. Tên miền <code>.example</code>
-                  được dành cho ví dụ, không phải website đăng nhập thật.
+          <section
+            class="phishing-simulation security-simulation"
+            aria-labelledby="phishingLabTitle"
+          >
+            <header class="security-simulation-header">
+              <div>
+                <h2 id="phishingLabTitle">Mô phỏng email và trang đăng nhập giả</h2>
+                <p>
+                  Mở email giả lập, kiểm tra địa chỉ đích, rồi thử hành động
+                  an toàn hoặc xem hậu quả của một lần gửi giả.
                 </p>
               </div>
+              <span class="security-simulation-kicker">PHISHING / LOCAL LAB</span>
+            </header>
+
+            <div class="security-simulation-body">
+              <section class="phishing-inbox" aria-label="Hộp thư giả lập">
+                <div class="phishing-inbox-toolbar">
+                  <strong>Hộp thư đến</strong>
+                  <span>1 thư chưa đọc</span>
+                </div>
+                <article class="phishing-email">
+                  <div class="phishing-email-avatar" aria-hidden="true">A</div>
+                  <div class="phishing-email-content">
+                    <div class="phishing-email-heading">
+                      <strong>Ngân hàng An Tâm</strong>
+                      <span>Hôm nay, 09:41</span>
+                    </div>
+                    <p class="phishing-email-sender">
+                      Người gửi: hotro@antam.example
+                    </p>
+                    <h3>Tài khoản sẽ bị tạm khóa trong 10 phút</h3>
+                    <p>
+                      Hệ thống phát hiện hoạt động bất thường. Hãy xác minh ngay
+                      để tránh gián đoạn giao dịch.
+                    </p>
+                    <button
+                      type="button"
+                      id="phishingOpenBtn"
+                      class="primary-btn"
+                    >
+                      Kiểm tra tài khoản
+                    </button>
+                  </div>
+                </article>
+              </section>
+
+              <section id="phishingSite" class="phishing-site" hidden>
+                <div class="phishing-browser-bar">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <div class="phishing-address">
+                    <span class="phishing-lock" aria-hidden="true">!</span>
+                    <span id="phishingAddressText">xac-minh-antam.example</span>
+                  </div>
+                </div>
+                <div class="phishing-site-body">
+                  <div class="phishing-domain-warning">
+                    <strong>Địa chỉ không thuộc ngân hàng An Tâm</strong>
+                    <span>
+                      Email nói về <code>antam.example</code>, nhưng trang này
+                      mở tại <code>xac-minh-antam.example</code>.
+                    </span>
+                  </div>
+                  <div class="phishing-fake-login">
+                    <span class="phishing-bank-mark" aria-hidden="true">AT</span>
+                    <h3>Ngân hàng An Tâm</h3>
+                    <p>Đăng nhập để tiếp tục xác minh</p>
+                    <label for="phishingDemoEmail">Tài khoản giả của lab</label>
+                    <input
+                      id="phishingDemoEmail"
+                      type="text"
+                      value="khach.demo@example.test"
+                      readonly
+                      autocomplete="off"
+                    />
+                    <label for="phishingDemoPassword">Mật khẩu giả của lab</label>
+                    <input
+                      id="phishingDemoPassword"
+                      type="password"
+                      value="not-a-real-password"
+                      readonly
+                      autocomplete="off"
+                    />
+                    <button
+                      type="button"
+                      id="phishingSubmitBtn"
+                      class="primary-btn"
+                    >
+                      Thử gửi dữ liệu giả
+                    </button>
+                    <p class="phishing-simulation-note">
+                      Chỉ là giá trị mẫu, không phải ô nhập thật. Lab không đọc,
+                      gửi hay lưu dữ liệu này.
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              <section id="phishingRecovery" class="phishing-recovery" hidden>
+                <h3>Nếu đã gửi thông tin thật</h3>
+                <ol>
+                  <li>Tự mở trang/app chính thức và đổi mật khẩu ngay.</li>
+                  <li>Đăng xuất hoặc thu hồi các phiên đang hoạt động.</li>
+                  <li>Báo ngân hàng/dịch vụ và bộ phận IT; bật MFA nếu chưa có.</li>
+                  <li>Nếu đã gửi OTP hoặc thông tin thanh toán, liên hệ ngân hàng ngay.</li>
+                </ol>
+                <button type="button" id="phishingRecoverBtn" class="secondary-btn">
+                  Đánh dấu đã xem hướng dẫn
+                </button>
+              </section>
+
+              <p
+                id="phishingResult"
+                class="security-simulation-status"
+                role="status"
+                aria-live="polite"
+              >
+                Trước khi mở link, hãy để ý người gửi, sự khẩn cấp và tên miền.
+              </p>
+
+              <div class="phishing-actions">
+                <button
+                  type="button"
+                  id="phishingProtectBtn"
+                  class="secondary-btn security-action-safe"
+                >
+                  Dừng lại và báo cáo email
+                </button>
+                <button type="button" id="phishingResetBtn" class="secondary-btn">
+                  Bắt đầu lại
+                </button>
+              </div>
+
+              <p class="simulation-safety-note">
+                Tất cả tên miền và tài khoản đều là ví dụ dành riêng cho lab.
+                Nút gửi chỉ đổi trạng thái giao diện; không gửi request, thu
+                thập hay lưu thông tin đăng nhập.
+              </p>
             </div>
-
-            <fieldset class="phishing-options">
-              <legend>Chọn tất cả dấu hiệu đáng ngờ bạn nhận thấy</legend>
-
-              <label class="phishing-option">
-                <input type="checkbox" name="phishingSign" value="urgency" />
-                <span>
-                  Trang đe dọa khóa tài khoản và tạo áp lực phải xác minh ngay.
-                </span>
-              </label>
-
-              <label class="phishing-option">
-                <input
-                  type="checkbox"
-                  name="phishingSign"
-                  value="credentials"
-                />
-                <span>
-                  Trang yêu cầu mật khẩu cùng mã OTP trên cùng một biểu mẫu.
-                </span>
-              </label>
-
-              <label class="phishing-option">
-                <input type="checkbox" name="phishingSign" value="sender" />
-                <span>
-                  Tên miền không phải địa chỉ chính thức đã được xác minh.
-                </span>
-              </label>
-
-              <label class="phishing-option">
-                <input type="checkbox" name="phishingSign" value="official" />
-                <span>
-                  Tự mở ứng dụng hoặc website chính thức để kiểm tra thông báo.
-                </span>
-              </label>
-            </fieldset>
-
-            <div class="phishing-actions">
-              <button type="button" id="phishingSafeBtn" class="primary-btn">
-                Kiểm tra lựa chọn
-              </button>
-            </div>
-
-            <div
-              id="phishingResult"
-              class="output-box phishing-result"
-              aria-live="polite"
-              role="status"
-            >
-              Kết quả sẽ hiển thị tại đây.
-            </div>
-          </section>
-
-          <section class="lab-panel">
-            <h2>Cách tự bảo vệ</h2>
-            <ul>
-              <li>Kiểm tra chính xác tên miền trước khi đăng nhập.</li>
-              <li>
-                Tự mở ứng dụng hoặc website chính thức thay vì theo liên kết lạ.
-              </li>
-              <li>
-                Không chia sẻ mật khẩu hoặc mã xác minh qua trang đáng ngờ.
-              </li>
-              <li>
-                Bật xác thực đa yếu tố và báo cáo trang giả mạo khi cần.
-              </li>
-            </ul>
           </section>
         </section>
 

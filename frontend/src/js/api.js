@@ -3,8 +3,8 @@
    Dùng chung cho các Lab trong Web Security Lab
    ========================================================= */
 
-// Backend Node.js đang chạy tại cổng 3000.
-const API_BASE_URL = "http://localhost:3000/api";
+// Giữ hostname API trùng với frontend để trình duyệt gửi session cookie.
+const API_BASE_URL = `http://${window.location.hostname}:3000/api`;
 
 /**
  * Gửi HTTP request đến Backend.

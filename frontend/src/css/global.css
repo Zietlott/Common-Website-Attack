@@ -348,7 +348,8 @@ ol {
 
 .lab-panel textarea,
 .lab-panel input[type="text"],
-.lab-panel input[type="email"] {
+.lab-panel input[type="email"],
+.lab-panel input[type="password"] {
   width: 100%;
 
   padding: 12px 14px;
@@ -374,7 +375,8 @@ ol {
 
 .lab-panel textarea:focus,
 .lab-panel input[type="text"]:focus,
-.lab-panel input[type="email"]:focus {
+.lab-panel input[type="email"]:focus,
+.lab-panel input[type="password"]:focus {
   outline: none;
 
   border-color: var(--primary);

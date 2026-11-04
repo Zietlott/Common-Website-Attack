@@ -1,62 +1,69 @@
-/* =========================================================
-   PHISHING LAB
-   Educational simulation only
-   ========================================================= */
-
-const phishingSafeBtn = document.getElementById("phishingSafeBtn");
+const phishingOpenBtn = document.getElementById("phishingOpenBtn");
+const phishingProtectBtn = document.getElementById("phishingProtectBtn");
+const phishingSubmitBtn = document.getElementById("phishingSubmitBtn");
+const phishingResetBtn = document.getElementById("phishingResetBtn");
+const phishingSite = document.getElementById("phishingSite");
 const phishingResult = document.getElementById("phishingResult");
-const phishingSigns = document.querySelectorAll(
-  'input[name="phishingSign"]',
-);
+const phishingRecovery = document.getElementById("phishingRecovery");
+const phishingRecoverBtn = document.getElementById("phishingRecoverBtn");
 
-if (phishingSafeBtn && phishingResult && phishingSigns.length > 0) {
-  phishingSafeBtn.addEventListener("click", function () {
-    const selectedSigns = Array.from(phishingSigns)
-      .filter((checkbox) => checkbox.checked)
-      .map((checkbox) => checkbox.value);
-    const correctSigns = ["urgency", "credentials", "sender"];
-    const missedSigns = correctSigns.filter(
-      (sign) => !selectedSigns.includes(sign),
+function showPhishingResult(message, state = "") {
+  phishingResult.classList.remove("is-safe", "is-warning", "is-danger");
+  if (state) {
+    phishingResult.classList.add(state);
+  }
+  phishingResult.textContent = message;
+}
+
+if (
+  phishingOpenBtn &&
+  phishingProtectBtn &&
+  phishingSubmitBtn &&
+  phishingResetBtn &&
+  phishingSite &&
+  phishingResult &&
+  phishingRecovery &&
+  phishingRecoverBtn
+) {
+  phishingOpenBtn.addEventListener("click", function () {
+    phishingSite.hidden = false;
+    showPhishingResult(
+      "Link đã mở trang giả. Dấu hiệu quan trọng: tên miền đích không phải antam.example và email thúc ép xác minh trong 10 phút.",
+      "is-warning",
     );
-    const incorrectSigns = selectedSigns.filter(
-      (sign) => !correctSigns.includes(sign),
+    phishingSite.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  });
+
+  phishingSubmitBtn.addEventListener("click", function () {
+    phishingRecovery.hidden = false;
+    showPhishingResult(
+      "Bạn vừa thử gửi thông tin mẫu trên trang giả. Trong một vụ thật, trang giả có thể lấy thông tin rồi dùng để thử chiếm tài khoản. Lab không đọc các ô, không gửi request và không lưu dữ liệu.",
+      "is-danger",
     );
+    phishingRecovery.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  });
 
-    phishingResult.classList.remove("is-safe", "is-warning");
-
-    if (selectedSigns.length === 0) {
-      phishingResult.classList.add("is-warning");
-      phishingResult.textContent =
-        "Hãy chọn những dấu hiệu bạn nhận thấy trước khi kiểm tra.";
-      return;
-    }
-
-    const correctCount = selectedSigns.filter((sign) =>
-      correctSigns.includes(sign),
-    ).length;
-
-    phishingResult.classList.add(
-      missedSigns.length === 0 && incorrectSigns.length === 0
-        ? "is-safe"
-        : "is-warning",
+  phishingProtectBtn.addEventListener("click", function () {
+    phishingSite.hidden = true;
+    phishingRecovery.hidden = true;
+    showPhishingResult(
+      "Đã dừng trước khi gửi thông tin và báo cáo email giả lập. Hãy tự mở ứng dụng hoặc gõ địa chỉ chính thức để kiểm tra tài khoản.",
+      "is-safe",
     );
-    const feedback = [
-      `Bạn nhận diện đúng ${correctCount}/${correctSigns.length} dấu hiệu.`,
-    ];
+  });
 
-    if (missedSigns.length > 0) {
-      feedback.push(`Bạn còn bỏ sót ${missedSigns.length} dấu hiệu đáng ngờ.`);
-    }
-
-    if (incorrectSigns.length > 0) {
-      feedback.push(
-        `${incorrectSigns.length} lựa chọn không phải dấu hiệu đáng ngờ; tự mở website hoặc ứng dụng chính thức là biện pháp bảo vệ.`,
-      );
-    }
-
-    feedback.push(
-      "Trang có lời đe dọa khẩn cấp, yêu cầu mật khẩu/OTP và tên miền không được xác minh. Không nhập thông tin; hãy tự mở website hoặc ứng dụng chính thức để kiểm tra.",
+  phishingResetBtn.addEventListener("click", function () {
+    phishingSite.hidden = true;
+    phishingRecovery.hidden = true;
+    showPhishingResult(
+      "Trước khi mở link, hãy để ý người gửi, sự khẩn cấp và tên miền.",
     );
-    phishingResult.textContent = feedback.join(" ");
+  });
+
+  phishingRecoverBtn.addEventListener("click", function () {
+    showPhishingResult(
+      "Đã xem checklist: đổi mật khẩu qua kênh chính thức, thu hồi phiên, báo cáo và bật MFA.",
+      "is-safe",
+    );
   });
 }

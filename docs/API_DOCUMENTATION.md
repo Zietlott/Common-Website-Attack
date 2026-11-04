@@ -46,6 +46,7 @@ http://localhost:3000/api/health
 
 **Ví dụ gọi từ Frontend:**
 ```javascript
+const csrfToken = loginResult.csrfToken;
 const response = await fetch("http://localhost:3000/api/health");
 const result = await response.json();
 console.log(result);
@@ -87,7 +88,8 @@ Content-Type: application/json
     "id": 2,
     "username": "student",
     "email": "student@example.com"
-  }
+  },
+  "csrfToken": "<session-bound token>"
 }
 ```
 
@@ -122,6 +124,7 @@ const result = await response.json();
 if (!response.ok) {
   throw new Error(result.message || "Đăng nhập thất bại");
 }
+const csrfToken = result.csrfToken;
 console.log(result.data);
 ```
 
@@ -130,6 +133,7 @@ console.log(result.data);
 - Backend sử dụng `bcrypt` để kiểm tra mật khẩu.
 
 - Sau khi đăng nhập thành công, backend tạo lại session và lưu ID người dùng vào `req.session.authUserId`.
+- Response đăng nhập trả thêm CSRF token gắn với session mới. Gửi token trong header `X-CSRF-Token` khi tạo bình luận.
 
 - Frontend cần sử dụng `credentials: "include"` khi gửi các request cần xác thực bằng session cookie.
 
@@ -264,7 +268,7 @@ console.log(result.data);
 
 **URL:** `http://localhost:3000/api/comments`
 
-**Request headers:** `Content-Type: application/json`
+**Request headers:** `Content-Type: application/json`, `X-CSRF-Token: <token nhận từ đăng nhập>`
 
 **Request body:**
 ```json
@@ -291,12 +295,15 @@ ID và thời gian chỉ là ví dụ. Response tạo bình luận không có tr
 
 **Quy tắc kiểm tra:** `content` phải là chuỗi không rỗng sau khi trim, dài tối đa 2.000 ký tự; backend loại bỏ khoảng trắng đầu/cuối trước khi lưu.
 
-**Lỗi:** `401` chưa đăng nhập hoặc tài khoản trong session không hợp lệ; `400` nội dung không hợp lệ.
+**Lỗi:** `401` chưa đăng nhập hoặc tài khoản trong session không hợp lệ; `403` CSRF token thiếu/sai; `400` nội dung không hợp lệ.
 ```javascript
 const response = await fetch("http://localhost:3000/api/comments", {
   method: "POST",
   credentials: "include",
-  headers: { "Content-Type": "application/json" },
+  headers: {
+    "Content-Type": "application/json",
+    "X-CSRF-Token": csrfToken
+  },
   body: JSON.stringify({ content: "Bình luận kiểm thử API" })
 });
 const result = await response.json();
@@ -321,7 +328,7 @@ commentElement.innerHTML = comment.content;
 
 với dữ liệu người dùng không đáng tin cậy.
 
-Trong dự án này, preview XSS trên giao diện chính minh họa cách một số thẻ định dạng được diễn giải nhưng không dùng sink `innerHTML` trực tiếp. Chỉ các thẻ định dạng trong allow-list được dựng thành phần tử; thuộc tính và nội dung hoạt động không được đưa vào DOM. Vùng so sánh an toàn dùng `textContent`. Demo bình luận local cũng dùng cùng preview giới hạn khi tải dữ liệu từ `/api/comments`, vì vậy nội dung bình luận không được thực thi.
+Trong dự án này, preview XSS trên giao diện chính minh họa cách một số thẻ định dạng được diễn giải nhưng không dùng sink `innerHTML` trực tiếp. Chỉ các thẻ định dạng trong allow-list được dựng thành phần tử; thuộc tính và nội dung hoạt động không được đưa vào DOM. Vùng so sánh an toàn dùng `textContent`. Demo bình luận local đăng nhập bằng tài khoản giả, tạo bình luận qua `POST /api/comments` (session + CSRF token bắt buộc), rồi tải lại từ `/api/comments`. Nội dung lưu trong SQLite không được thực thi ở cả hai cách hiển thị.
 
 ---
 
@@ -331,23 +338,19 @@ Trong dự án này, preview XSS trên giao diện chính minh họa cách một
 
 SQL Injection là hình thức tấn công trong đó dữ liệu đầu vào không đáng tin cậy làm thay đổi cấu trúc hoặc logic của câu truy vấn SQL.
 
-Trong dự án, SQL Injection Lab minh họa việc tìm kiếm người dùng theo `username`; đây không phải luồng đăng nhập hay xác thực tài khoản. Lab sử dụng hai chế độ:
+Trong giao diện, SQL Injection Lab mô phỏng đăng nhập vào website giả lập: endpoint cố ý dễ bị tấn công ghép username trực tiếp vào điều kiện SQL, còn input crafted có thể làm điều kiện luôn đúng và comment phần kiểm tra mật khẩu. Đây chỉ là kết quả xác thực giả lập trên database demo chỉ đọc; không tạo session hay đăng nhập vào website thật.
+
+Lab sử dụng hai chế độ:
 
 - **Vulnerable Mode:** Ghép trực tiếp dữ liệu đầu vào vào câu truy vấn SQL để minh họa nguy cơ.
 
 - **Secure Mode:** Sử dụng truy vấn tham số hóa (Parameterized Query) để ngăn dữ liệu đầu vào thay đổi logic SQL.
 
-Giao diện hiện mô phỏng đăng nhập bằng các endpoint `/login-vulnerable` và
-
-`/login-secure`, sử dụng tài khoản demo trong database. Endpoint vulnerable là
-
-mô phỏng cố ý không an toàn và chỉ được bật trong môi trường development; chỉ
-
-sử dụng dữ liệu local giả. Endpoint `/vulnerable` và `/secure` bên dưới vẫn giữ
-
-chức năng tìm kiếm username như mô tả trong các mục tương ứng.
+Giao diện gọi `/login-vulnerable` hoặc `/login-secure` với `username` và `password` giả. Endpoint vulnerable là mô phỏng cố ý không an toàn và chỉ được bật trong môi trường development. Các endpoint `/vulnerable` và `/secure` bên dưới vẫn giữ chức năng tìm kiếm username.
 
 Các API lab chỉ hoạt động khi `NODE_ENV=development` và `ENABLE_SECURITY_LABS=true`, sử dụng database demo SQLite riêng.
+
+Luồng login nhận JSON có hai trường `username` và `password`, mỗi trường 1–200 ký tự. Endpoint vulnerable trả `authenticated: true` nếu truy vấn bị thay đổi; endpoint secure bind username qua placeholder rồi xác minh mật khẩu bằng bcrypt. Cả hai chỉ đọc tài khoản demo; không trả mật khẩu hoặc tạo phiên đăng nhập.
 
 ### 6.2. POST /api/labs/sqli/vulnerable
 
@@ -431,10 +434,7 @@ console.log(result);
 
 ### 6.4. So sánh hai chế độ
 
-Ví dụ chuỗi đầu vào dùng trong môi trường thử nghiệm local:
-```text
-' OR '1'='1
-```
+Trong giao diện, nút **Nạp kịch bản tấn công** đặt cùng một input thử nghiệm và mật khẩu giả không hợp lệ. Chế độ nối chuỗi có thể chấp nhận đăng nhập vì input làm thay đổi điều kiện SQL; chuyển sang prepared statement rồi gửi lại thì input được bind như username thông thường và mật khẩu giả bị từ chối.
 
 | Nội dung                       | Vulnerable Mode                   | Secure Mode                       |
 
@@ -444,20 +444,30 @@ Ví dụ chuỗi đầu vào dùng trong môi trường thử nghiệm local:
 
 | Username hợp lệ                | Trả về người dùng phù hợp         | Trả về người dùng phù hợp         |
 
-| Chuỗi thử nghiệm SQL Injection | Có thể trả về nhiều tài khoản mẫu | Không làm thay đổi logic truy vấn |
+| Login với input thử nghiệm | Có thể vượt qua kiểm tra mật khẩu | Input chỉ là giá trị username |
 
 | Cơ chế bảo vệ                  | Không có tham số hóa              | Parameterized Query               |
 
-**Ví dụ truy vấn không an toàn:**
+**Ví dụ truy vấn không an toàn trong luồng login:**
 ```javascript
-const sql = `SELECT id, username, email FROM users WHERE username = '${username}'`;
+const sql =
+  `SELECT id, username, email FROM users ` +
+  `WHERE username = '${username}' ` +
+  `AND bcrypt_compare('${password}', password) = 1`;
 ```
 
-**Ví dụ truy vấn an toàn:**
+**Ví dụ xử lý an toàn:**
 ```javascript
-const sql = "SELECT id, username, email FROM users WHERE username = ?";
-const users = db.prepare(sql).all(username);
+const user = db.prepare(
+  "SELECT id, username, password, email FROM users WHERE username = ?"
+).get(username);
+
+if (!user || !(await bcrypt.compare(password, user.password))) {
+  return loginRejected;
+}
 ```
+
+SQL preview của giao diện ẩn giá trị mật khẩu; chỉ dùng để quan sát cách ghép input, không phải dữ liệu đăng nhập thật.
 
 ### 6.5. Các trường hợp cần xử lý
 
@@ -481,15 +491,15 @@ const users = db.prepare(sql).all(username);
 
 Thành viên Frontend cần:
 
-1\. Tạo ô nhập username.
+1\. Mở lab và nạp kịch bản login giả.
 
-2\. Cho phép lựa chọn chế độ Vulnerable hoặc Secure.
+2\. Chọn nối chuỗi hoặc prepared statement.
 
-3\. Gửi request `POST` đến endpoint tương ứng.
+3\. Gửi cùng input tới endpoint login tương ứng.
 
-4\. Hiển thị kết quả trả về từ Backend.
+4\. Quan sát kết quả đăng nhập giả và SQL preview.
 
-5\. Hiển thị giải thích về sự khác nhau giữa hai phương pháp.
+5\. Không dùng tài khoản, mật khẩu hoặc database thật.
 
 Không sử dụng `innerHTML` để hiển thị trực tiếp dữ liệu không đáng tin cậy trong response.
 
@@ -505,13 +515,13 @@ CSRF (Cross-Site Request Forgery) là hình thức tấn công lợi dụng phi�
 
 CSRF Lab trong dự án minh họa hai cơ chế:
 
-- **Vulnerable Mode:** Endpoint cập nhật `displayName` khi có session demo hợp lệ nhưng không xác minh CSRF token.
+- **Vulnerable Mode:** Endpoint cập nhật `displayName` hoặc trừ tiền trong tài khoản giả khi có session demo hợp lệ nhưng không xác minh CSRF token.
 
-- **Secure Mode:** Endpoint cập nhật `displayName` khi có session demo hợp lệ và CSRF token hợp lệ; thiếu hoặc sai token sẽ bị từ chối với HTTP `403`.
+- **Secure Mode:** Endpoint chỉ cập nhật `displayName` hoặc số dư giả khi có session demo hợp lệ và CSRF token hợp lệ; thiếu hoặc sai token sẽ bị từ chối với HTTP `403`.
 
-Lab sử dụng `express-session` và cookie `security_lab.sid`. Cả hai request cập nhật trong giao diện demo đều gửi cookie của session; điểm khác biệt được thử nghiệm là endpoint có kiểm tra token hay không. Các API chỉ hoạt động khi `NODE_ENV=development` và `ENABLE_SECURITY_LABS=true`.
+Lab sử dụng `express-session` và cookie `security_lab.sid`. Giao diện gửi form `application/x-www-form-urlencoded` từ origin frontend đến backend; trình duyệt tự đính kèm cookie phiên. Server demo chỉ trừ số dư giả trong session. Các API chỉ hoạt động khi `NODE_ENV=development` và `ENABLE_SECURITY_LABS=true`.
 
-Đây là phép so sánh kiểm tra token ở hai endpoint, không phải mô phỏng đầy đủ một cuộc tấn công cross-site trên trình duyệt. Cookie hiện đặt `SameSite=Lax`, backend demo chạy HTTP local và CORS chỉ cho phép origin frontend đã cấu hình đọc response. CORS không thay thế CSRF token hay cơ chế chống CSRF khác; hành vi gửi cookie còn phụ thuộc trình duyệt, scheme, hostname và cấu hình môi trường. Không suy rộng kết quả demo thành kết luận cho mọi triển khai CSRF thực tế.
+Hai cổng localhost khác origin nhưng cùng site, nên cookie `SameSite=Lax` vẫn được gửi trong mô phỏng; đây không phải domain Internet bên ngoài. Same-Origin Policy ngăn trang giả đọc response, nhưng không ngăn form gửi request. CORS không thay thế CSRF token. Trong triển khai thật, `SameSite`, scheme, hostname, Origin/Referer và cấu hình trình duyệt đều ảnh hưởng việc gửi cookie; không suy rộng kết quả local thành kết luận cho mọi môi trường.
 
 ### 7.2. POST /api/labs/csrf/start
 
@@ -528,7 +538,7 @@ http://localhost:3000/api/labs/csrf/start
 
 **Kết quả thành công:** HTTP `200 OK`.
 
-Response chứa thông tin phiên demo và `csrfToken`. Trình duyệt nhận session cookie thông qua header `Set-Cookie`.
+Response chứa thông tin phiên demo, `csrfToken` và số dư giả ban đầu `5.000.000` VND. Trình duyệt nhận session cookie thông qua header `Set-Cookie`.
 
 **Ví dụ gọi từ Frontend:**
 ```javascript
@@ -558,9 +568,14 @@ http://localhost:3000/api/labs/csrf/state
 ```json
 {
   "success": true,
-  "displayName": "Administrator"
+  "displayName": "Administrator",
+  "csrfToken": "<session-bound token>",
+  "balance": 5000000,
+  "lastTransfer": null
 }
 ```
+
+`csrfToken` chỉ được dùng bởi giao diện ngân hàng tin cậy; trang giả không thể đọc response cross-origin để lấy token.
 
 **Ví dụ gọi từ Frontend:**
 ```javascript
@@ -588,6 +603,15 @@ console.log(result.displayName);
 ```
 
 **Kết quả mong đợi:** HTTP `200 OK` khi có phiên demo hợp lệ, dù không gửi CSRF token.
+
+Ngoài `displayName`, lab nhận form chuyển tiền giả với `recipient` (6–16 chữ số) và `amount` (số nguyên dương không vượt số dư). Request form không có token được dùng để mô phỏng trang giả:
+
+```text
+Content-Type: application/x-www-form-urlencoded
+recipient=9988776655&amount=500000
+```
+
+Server chỉ trừ số dư demo trong session và trả số dư/giao dịch giả mới.
 
 **Ví dụ gọi từ Frontend:**
 ```javascript
@@ -623,6 +647,8 @@ X-CSRF-Token: \<CSRF token từ API /start>
   "displayName": "CSRF Secure Test"
 }
 ```
+
+Giao dịch giả dùng cùng endpoint với body `{"recipient":"9988776655","amount":500000}`. Giao diện gửi token phiên trong `X-CSRF-Token`; form HTML từ trang giả không thể thêm header này và bị từ chối.
 
 **Kết quả mong đợi:**
 
@@ -670,9 +696,9 @@ Frontend cần thực hiện theo thứ tự:
 
 3\. Gọi `/api/labs/csrf/state` để hiển thị trạng thái ban đầu.
 
-4\. Gọi `/api/labs/csrf/vulnerable` để minh họa request không cần token.
+4\. Gửi form-urlencoded không token tới `/api/labs/csrf/vulnerable` và quan sát số dư giả thay đổi.
 
-5\. Gọi `/api/labs/csrf/secure` với token thiếu, sai hoặc đúng để so sánh.
+5\. Gửi cùng form tới `/api/labs/csrf/secure` để xác nhận request thiếu token bị từ chối; gửi thao tác hợp lệ với token trong header để so sánh.
 
 6\. Gọi lại `/api/labs/csrf/state` để xem trạng thái có thay đổi hay không.
 

@@ -16,6 +16,7 @@ test("POST /api/comments - Reject invalid content", async () => {
     });
 
   assert.equal(loginResponse.status, 200);
+  const csrfToken = loginResponse.body.csrfToken;
 
   const invalidContents = [
     "",
@@ -29,6 +30,7 @@ test("POST /api/comments - Reject invalid content", async () => {
   for (const content of invalidContents) {
     const response = await agent
       .post("/api/comments")
+      .set("X-CSRF-Token", csrfToken)
       .send({ content });
 
     assert.equal(

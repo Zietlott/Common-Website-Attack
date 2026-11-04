@@ -3,219 +3,283 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' http://localhost:3000 http://127.0.0.1:3000; frame-src 'self'; form-action 'self'"
+    />
     <meta
       name="description"
-      content="Phòng thực hành tìm hiểu Cross-Site Scripting và cách phòng chống."
+      content="Tìm hiểu và thực hành mô phỏng an toàn các dạng XSS cùng biện pháp phòng thủ."
     />
-
     <title>XSS Lab | Web Security Lab</title>
-
     <link rel="stylesheet" href="../css/global.css" />
     <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="../css/security-simulation.css" />
     <link rel="stylesheet" href="../css/xss.css" />
   </head>
 
   <body data-page="xss" data-title="XSS Lab">
     <div class="app">
-      <!-- Sidebar -->
       <div id="sidebar-container"></div>
-
       <main class="main-content">
-        <!-- Header -->
         <div id="header-container"></div>
 
         <section class="content xss-content">
-          <!-- PAGE HEADING -->
-          <div class="page-heading">
-            <span class="eyebrow-blue"> WEB SECURITY / LAB 01 </span>
-
+          <header class="page-heading">
+            <span class="eyebrow-blue">WEB SECURITY / LAB 01</span>
             <h1>Cross-Site Scripting (XSS)</h1>
-
             <p>
-              Tìm hiểu cách dữ liệu đầu vào không đáng tin cậy có thể tạo ra rủi
-              ro bảo mật và cách hiển thị dữ liệu an toàn.
+              Kẻ tấn công gửi link hoặc bình luận độc hại đến website bạn tin
+              tưởng. Nếu website đưa dữ liệu đó vào trang như mã, trình duyệt
+              có thể thực thi nó trong origin của website.
             </p>
-          </div>
+          </header>
 
-          <!-- INTRO -->
-          <section class="xss-intro">
-            <h2>XSS là gì?</h2>
-
+          <section class="xss-guide lab-panel" aria-labelledby="xssGuideTitle">
+            <h2 id="xssGuideTitle">XSS là gì?</h2>
             <p>
-              Cross-Site Scripting (XSS) là lỗ hổng có thể xảy ra khi ứng dụng
-              đưa dữ liệu không đáng tin cậy vào trang web mà không xử lý phù
-              hợp. Trong trường hợp bị khai thác, trình duyệt có thể diễn giải
-              dữ liệu đó thành nội dung hoạt động.
+              Cross-Site Scripting (XSS) xảy ra khi website nhận dữ liệu không
+              đáng tin cậy rồi đưa vào trang như HTML/JavaScript thay vì hiển
+              thị an toàn như văn bản. Trình duyệt thực thi nội dung đó trong
+              origin của website bị lỗi. Vì vậy, XSS không “phá” Same-Origin
+              Policy; mã độc được trình duyệt xem như mã của chính website đó.
             </p>
+
+            <section class="xss-guide-section" aria-labelledby="xssTypesTitle">
+              <h3 id="xssTypesTitle">Các dạng XSS phổ biến</h3>
+              <div class="xss-guide-grid">
+                <article class="xss-guide-card">
+                  <h3>Reflected XSS</h3>
+                  <p>
+                    Payload nằm trong request, thường ở link tìm kiếm hoặc email.
+                    Website phản chiếu nó vào response ngay lập tức mà không mã
+                    hóa đúng ngữ cảnh; người nhận phải mở link thì mới bị ảnh hưởng.
+                  </p>
+                </article>
+                <article class="xss-guide-card">
+                  <h3>Stored XSS</h3>
+                  <p>
+                    Payload được lưu trong bình luận, hồ sơ hoặc nội dung khác.
+                    Mỗi lần trang hiển thị dữ liệu chưa được làm sạch an toàn,
+                    khách truy cập có thể bị ảnh hưởng — không cần mở một link
+                    riêng cho từng người.
+                  </p>
+                </article>
+                <article class="xss-guide-card">
+                  <h3>DOM-based XSS</h3>
+                  <p>
+                    JavaScript phía trình duyệt đọc nguồn dữ liệu như URL fragment
+                    hoặc query rồi đưa vào sink nguy hiểm như <code>innerHTML</code>.
+                    Lỗi nằm ở cách mã phía client cập nhật DOM; server có thể không
+                    hề phản chiếu payload trong HTML.
+                  </p>
+                </article>
+              </div>
+            </section>
+
+            <div class="xss-guide-grid xss-guide-grid-bottom">
+              <article class="xss-guide-card">
+                <h3>Hậu quả</h3>
+                <p>
+                  Kẻ tấn công có thể giả nội dung trên trang, đọc dữ liệu mà
+                  người dùng được phép xem, thao tác giao diện hoặc gửi yêu cầu
+                  bằng phiên hiện tại. Điều này có thể dẫn tới lộ dữ liệu hay
+                  hành động trái phép. <code>HttpOnly</code> ngăn JavaScript
+                  đọc cookie trực tiếp nhưng không ngăn mã XSS thao tác trang
+                  hoặc gửi request.
+                </p>
+              </article>
+              <article class="xss-guide-card">
+                <h3>Cách phòng thủ</h3>
+                <ul>
+                  <li>
+                    <strong>Xác thực đầu vào:</strong> áp dụng quy tắc theo
+                    nghiệp vụ (độ dài, định dạng); từ chối markup nếu trường chỉ
+                    nhận văn bản. Đây là lớp bổ sung, không thay thế mã hóa.
+                  </li>
+                  <li>
+                    <strong>Mã hóa đầu ra theo ngữ cảnh:</strong> hiển thị văn
+                    bản bằng <code>textContent</code>; mã hóa đúng khi chèn vào
+                    HTML, thuộc tính hoặc URL. Tránh ghép dữ liệu vào
+                    <code>innerHTML</code>.
+                  </li>
+                  <li>
+                    <strong>Nếu cần cho phép HTML:</strong> dùng sanitizer
+                    đáng tin cậy với allowlist thẻ/thuộc tính tối thiểu; không
+                    tự viết bộ lọc bằng cách xóa vài chuỗi.
+                  </li>
+                  <li>
+                    <strong>CSP và cookie an toàn:</strong> CSP giới hạn nguồn
+                    script để giảm tác động khi còn lỗi; <code>HttpOnly</code>,
+                    <code>Secure</code>, <code>SameSite</code> bảo vệ cookie
+                    nhưng không thay thế xử lý đầu ra an toàn.
+                  </li>
+                </ul>
+              </article>
+            </div>
           </section>
 
-          <!-- INTERACTIVE LAB -->
-          <section class="xss-lab">
-            <div class="lab-heading">
-              <span class="eyebrow-blue"> INTERACTIVE DEMO </span>
-
-              <h2>Thử nghiệm xử lý dữ liệu đầu vào</h2>
-
-              <p>
-                Nhập nội dung mẫu để so sánh preview diễn giải một số thẻ định
-                dạng HTML với cách hiển thị nguyên văn bằng
-                <code>textContent</code>. Preview chỉ cho phép thẻ định dạng
-                văn bản, bỏ qua nội dung hoạt động và không giữ lại thuộc tính.
-              </p>
-
-              <p>
-                Có thể tải bình luận mẫu từ backend local để xem cùng phép so
-                sánh:
-                <a class="secondary-btn" href="xss-test.html">
-                  Mở demo bình luận local
-                </a>
-              </p>
-            </div>
-
-            <!-- INPUT FORM -->
-            <form id="xssForm" class="lab-panel xss-form">
-              <div class="form-group">
-                <label for="userInput"> Dữ liệu đầu vào </label>
-
-                <textarea
-                  id="userInput"
-                  name="userInput"
-                  rows="5"
-                  placeholder="Ví dụ: <strong>Xin chào</strong>"
-                  required
-                ></textarea>
+          <section class="xss-lab security-simulation" aria-labelledby="xssLabTitle">
+            <header class="security-simulation-header">
+              <div>
+                <h2 id="xssLabTitle">Thử tấn công và bật phòng thủ</h2>
+                <p>
+                  Chọn một tình huống thực tế. Theo dõi dữ liệu đi từ link hoặc
+                  bình luận đến trang cửa hàng và xem hậu quả ngay tại đó.
+                </p>
               </div>
+              <span class="security-simulation-kicker">LOCAL / SANDBOX</span>
+            </header>
 
-              <div class="xss-examples" aria-label="Ví dụ đầu vào">
-                <span>Thử nhanh:</span>
-                <button
-                  type="button"
-                  class="secondary-btn xss-example-btn"
-                  data-xss-example="formatting"
-                >
-                  Thẻ định dạng
-                </button>
-                <button
-                  type="button"
-                  class="secondary-btn xss-example-btn"
-                  data-xss-example="active-content"
-                >
-                  Nội dung hoạt động bị lọc
-                </button>
-              </div>
+            <div class="security-simulation-body">
+              <form id="xssForm" class="xss-form">
+                <div class="xss-control-grid">
+                  <div class="form-group">
+                    <label for="xssAttackType">Dạng tấn công</label>
+                    <select id="xssAttackType">
+                      <option value="reflected">Reflected — link tìm kiếm</option>
+                      <option value="stored">Stored — bình luận đã lưu</option>
+                      <option value="dom">DOM-based — dữ liệu trong URL</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="xssDefenseType">Cách phòng thủ để thử</label>
+                    <select id="xssDefenseType">
+                      <option value="validate">Xác thực đầu vào</option>
+                      <option value="encode">Mã hóa đầu ra (textContent)</option>
+                      <option value="sanitize">Lọc HTML theo allowlist</option>
+                    </select>
+                  </div>
+                </div>
 
-              <div
-                id="xssMessage"
-                class="xss-message"
+                <section class="xss-attack-flow" aria-label="Tình huống tấn công">
+                  <article id="xssFlowReflected" class="xss-flow-card">
+                    <div class="xss-flow-appbar">
+                      <span>Hộp thư</span>
+                      <span>1 thư mới</span>
+                    </div>
+                    <div class="xss-flow-content">
+                      <strong>Người gửi: donhang@shopviet.example</strong>
+                      <p>Đơn hàng #1042 có cập nhật giao hàng</p>
+                      <span>Nhấn “Xem đơn hàng” để kiểm tra trạng thái.</span>
+                    </div>
+                    <p class="xss-flow-step">
+                      1. Kẻ tấn công gửi link tìm kiếm có dữ liệu độc hại. 2.
+                      Nạn nhân mở link; website phản chiếu dữ liệu vào kết quả.
+                    </p>
+                  </article>
+
+                  <article id="xssFlowStored" class="xss-flow-card" hidden>
+                    <div class="xss-flow-appbar">
+                      <span>Đánh giá sản phẩm</span>
+                      <span>Khách hàng · vừa đăng</span>
+                    </div>
+                    <div class="xss-flow-content">
+                      <strong>“Máy xay đa năng ShopViet”</strong>
+                      <p>Sản phẩm tốt, giao hàng nhanh.</p>
+                    </div>
+                    <p class="xss-flow-step">
+                      1. Kẻ tấn công đăng bình luận chứa dữ liệu độc hại. 2.
+                      Bình luận được lưu; khách khác mở trang sẽ gặp nội dung đó.
+                    </p>
+                  </article>
+
+                  <article id="xssFlowDom" class="xss-flow-card" hidden>
+                    <div class="xss-flow-appbar">
+                      <span>Link chia sẻ sản phẩm</span>
+                      <span>shopviet.example</span>
+                    </div>
+                    <div class="xss-flow-content">
+                      <strong>Sản phẩm được gửi cho bạn</strong>
+                      <p>Trang đọc dữ liệu trong URL rồi cập nhật nội dung bằng JavaScript.</p>
+                    </div>
+                    <p class="xss-flow-step">
+                      1. Kẻ tấn công gửi link có dữ liệu trong fragment. 2.
+                      JavaScript phía trình duyệt đưa dữ liệu vào DOM không an toàn.
+                    </p>
+                  </article>
+                </section>
+
+                <div class="xss-payload">
+                  <span>Payload mẫu trong lab</span>
+                  <code id="xssPayloadPreview"></code>
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" id="xssAttackBtn" class="primary-btn">
+                    Nạn nhân mở link email
+                  </button>
+                  <button
+                    type="button"
+                    id="xssVictimBtn"
+                    class="primary-btn"
+                    hidden
+                  >
+                    Khách truy cập trang sản phẩm
+                  </button>
+                  <button
+                    type="button"
+                    id="xssDefendBtn"
+                    class="secondary-btn security-action-safe"
+                  >
+                    Bật phòng thủ và thử lại
+                  </button>
+                  <button type="button" id="resetBtn" class="secondary-btn">
+                    Đặt lại
+                  </button>
+                </div>
+              </form>
+
+              <p id="xssMessage" class="xss-message" role="alert" hidden></p>
+              <p
+                id="xssSimulationStatus"
+                class="security-simulation-status"
+                role="status"
                 aria-live="polite"
-                hidden
-              ></div>
+              >
+                Chọn dạng XSS rồi chạy tấn công hoặc thử một cách phòng thủ.
+              </p>
 
-              <div class="form-actions">
-                <button type="submit" class="primary-btn">Chạy mô phỏng</button>
-
-                <button type="button" id="resetBtn" class="secondary-btn">
-                  Đặt lại
-                </button>
-              </div>
-            </form>
-
-            <!-- OUTPUT -->
-            <div class="lab-layout">
-              <!-- Inert HTML interpretation preview -->
-              <section class="lab-panel">
-                <div class="result-heading">
-                  <span class="result-number"> 01 </span>
-
-                  <div>
-                    <h3>HTML được diễn giải (preview)</h3>
-
-                    <span class="result-label"> PREVIEW AN TOÀN </span>
-                  </div>
+              <section class="xss-result lab-panel" aria-labelledby="xssResultTitle">
+                <div class="xss-result-heading">
+                  <h3 id="xssResultTitle">Kết quả mô phỏng</h3>
+                  <span id="xssResultBadge" class="xss-result-badge">Chưa chạy</span>
                 </div>
-
-                <p>
-                  Một ứng dụng dùng <code>innerHTML</code> trực tiếp có thể
-                  khiến trình duyệt diễn giải nội dung không tin cậy. Preview
-                  này chỉ dựng một danh sách thẻ định dạng an toàn để minh họa;
-                  không chạy nội dung hoạt động.
-                </p>
-
-                <div
-                  id="vulnerableOutput"
-                  class="output-box"
-                  aria-live="polite"
-                >
-                  Chưa có dữ liệu mô phỏng.
+                <iframe
+                  id="xssAttackFrame"
+                  title="Website cửa hàng giả lập trong sandbox"
+                  sandbox="allow-scripts"
+                  referrerpolicy="same-origin"
+                  hidden
+                ></iframe>
+                <div id="xssDefenseOutput" class="xss-defense-output" hidden></div>
+                <div id="xssEmptyState" class="xss-empty-state">
+                  Chạy mô phỏng để xem kết quả tại đây.
                 </div>
               </section>
 
-              <!-- SAFE SIMULATION -->
-              <section class="lab-panel">
-                <div class="result-heading">
-                  <span class="result-number safe"> 02 </span>
+              <p class="simulation-safety-note">
+                Không dùng dữ liệu thật. Mã chỉ chạy trong iframe sandbox; không
+                có quyền truy cập origin, cookie hay mạng.
+              </p>
 
-                  <div>
-                    <h3>Cách hiển thị an toàn</h3>
-
-                    <span class="result-label safe-label"> KHUYẾN NGHỊ </span>
-                  </div>
-                </div>
-
-                <p>
-                  Dùng
-                  <code>textContent</code>
-                  để hiển thị dữ liệu dưới dạng văn bản thay vì diễn giải nó
-                  thành HTML.
-                </p>
-
-                <div id="safeOutput" class="output-box" aria-live="polite">
-                  Chưa có dữ liệu.
-                </div>
-              </section>
+              <nav class="xss-references" aria-label="Nguồn tham khảo XSS">
+                <span>Tham khảo:</span>
+                <a href="https://portswigger.net/web-security/cross-site-scripting/reflected" target="_blank" rel="noopener noreferrer">Reflected</a>
+                <a href="https://portswigger.net/web-security/cross-site-scripting/stored" target="_blank" rel="noopener noreferrer">Stored</a>
+                <a href="https://portswigger.net/web-security/cross-site-scripting/dom-based" target="_blank" rel="noopener noreferrer">DOM-based</a>
+                <a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">OWASP phòng thủ</a>
+              </nav>
             </div>
-          </section>
-
-          <!-- SECURITY NOTES -->
-          <section class="security-notes">
-            <h2>Cách phòng chống XSS</h2>
-
-            <ul>
-              <li>Mã hóa dữ liệu đầu ra phù hợp với ngữ cảnh hiển thị.</li>
-
-              <li>
-                Ưu tiên các API hiển thị văn bản như
-                <code>textContent</code>.
-              </li>
-
-              <li>
-                Tránh chèn dữ liệu không đáng tin cậy bằng
-                <code>innerHTML</code>.
-              </li>
-
-              <li>Kiểm tra và xử lý dữ liệu đầu vào ở phía máy chủ khi cần.</li>
-
-              <li>
-                Cân nhắc Content Security Policy (CSP) như một lớp phòng vệ bổ
-                sung.
-              </li>
-            </ul>
           </section>
         </section>
 
-        <!-- Footer -->
         <div id="footer-container"></div>
       </main>
     </div>
 
-    <!-- Shared JS -->
     <script src="../js/components.js"></script>
-
-    <!-- Safe, allow-listed HTML interpretation preview -->
     <script src="../js/xss-preview.js"></script>
-
-    <!-- XSS JS -->
     <script src="../js/xss.js"></script>
   </body>
 </html>

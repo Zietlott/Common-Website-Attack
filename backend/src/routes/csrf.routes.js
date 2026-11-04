@@ -10,6 +10,7 @@ const {
 
 const router = express.Router();
 
+router.use(express.urlencoded({ extended: false, limit: "10kb" }));
 router.post("/start", startDemo);
 
 router.use(requireDemoSession);

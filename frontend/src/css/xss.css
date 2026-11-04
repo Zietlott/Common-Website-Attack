@@ -1,140 +1,208 @@
-/* =========================================================
-   XSS LAB
-   ========================================================= */
-
 .xss-content {
   max-width: 1200px;
 }
 
-/* ---------------------------------------------------------
-   Intro
-   --------------------------------------------------------- */
-
-.xss-intro {
-  margin-bottom: 24px;
-  padding: 18px 20px;
-  border: 1px solid #bfdbfe;
-  border-radius: var(--radius-lg);
-  background: #eff6ff;
+.xss-guide {
+  margin-top: 20px;
+  background: #fff;
 }
 
-.xss-intro p {
+.xss-guide > h2 {
+  margin: 0 0 8px;
+  color: var(--text-heading);
+}
+
+.xss-guide > p {
   margin: 0;
-  color: #1e3a8a;
-  line-height: 1.7;
+  color: var(--text-main);
+  line-height: 1.65;
 }
 
-/* ---------------------------------------------------------
-   Lab section
-   --------------------------------------------------------- */
-
-.xss-lab {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+.xss-guide-section {
+  margin-top: 20px;
 }
 
-.lab-heading {
-  margin-bottom: 2px;
+.xss-guide-section > h3 {
+  margin: 0;
+  color: var(--text-heading);
+  font-size: 1.05rem;
 }
 
-.lab-heading h2 {
+.xss-guide-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.xss-guide-grid-bottom {
+  margin-top: 10px;
+}
+
+.xss-guide-card {
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: #fff;
+}
+
+.xss-guide-card h3 {
   margin: 0 0 6px;
-  color: var(--text);
-  font-size: 1.35rem;
-  font-weight: 700;
+  color: var(--text-heading);
+  font-size: 0.98rem;
 }
 
-.lab-heading p {
+.xss-guide-card p,
+.xss-guide-card ul {
   margin: 0;
-  color: var(--muted);
+  color: var(--text-main);
   line-height: 1.6;
 }
 
-/* ---------------------------------------------------------
-   XSS form
-   --------------------------------------------------------- */
+.xss-guide-card ul {
+  display: grid;
+  gap: 8px;
+  padding-left: 19px;
+}
+
+.xss-guide-card li {
+  padding-left: 2px;
+}
+
+.xss-guide-card li + li {
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.xss-lab {
+  margin-top: 20px;
+}
 
 .xss-form {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 14px;
+}
+
+.xss-control-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
 }
 
 .xss-form .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 7px;
+  min-width: 0;
 }
 
-.xss-form label {
+.xss-form label,
+.xss-payload > span {
   color: var(--text);
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: 0.92rem;
+  font-weight: 650;
 }
 
-.xss-form textarea {
+.xss-form select {
   width: 100%;
-  min-height: 120px;
-  padding: 12px 14px;
-
+  min-height: 44px;
+  padding: 9px 12px;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-
   background: #fff;
   color: var(--text);
-
-  font-family: inherit;
-  font-size: 0.95rem;
-  line-height: 1.5;
-
-  resize: vertical;
-  outline: none;
-
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.xss-form textarea::placeholder {
-  color: #94a3b8;
-}
-
-.xss-form textarea:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
-}
-
-.xss-examples {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  color: var(--muted);
-  font-size: 0.88rem;
-}
-
-.xss-example-btn {
-  min-height: 36px;
-  padding: 7px 11px;
   font: inherit;
 }
 
-/* ---------------------------------------------------------
-   Validation message
-   --------------------------------------------------------- */
+.xss-attack-flow {
+  min-width: 0;
+}
+
+.xss-flow-card {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: #fff;
+}
+
+.xss-flow-card[hidden] {
+  display: none;
+}
+
+.xss-flow-appbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 13px;
+  border-bottom: 1px solid var(--border);
+  background: #f8fafc;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+
+.xss-flow-content {
+  padding: 13px;
+}
+
+.xss-flow-content strong {
+  color: var(--text-heading);
+  font-size: 0.88rem;
+}
+
+.xss-flow-content p {
+  margin: 6px 0 0;
+  color: var(--text-main);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.xss-flow-content span {
+  display: block;
+  margin-top: 6px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.xss-flow-step {
+  margin: 0;
+  padding: 10px 13px;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.xss-payload {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: #fff;
+}
+
+.xss-payload code {
+  overflow-wrap: anywhere;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+}
+
+#xssVictimBtn[hidden] {
+  display: none;
+}
 
 .xss-message {
   margin: 0;
   padding: 10px 12px;
-
   border: 1px solid #fecaca;
   border-radius: var(--radius-md);
-
-  background: #fef2f2;
-  color: #b91c1c;
-
-  font-size: 0.9rem;
+  background: #fff7f7;
+  color: #991b1b;
   line-height: 1.5;
 }
 
@@ -142,138 +210,187 @@
   display: none;
 }
 
-/* ---------------------------------------------------------
-   Output layout
-   --------------------------------------------------------- */
-
-.lab-layout {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
+.xss-result {
+  margin: 0 !important;
+  background: #fff;
 }
 
-.result-panel {
-  min-width: 0;
-}
-
-.result-heading {
+.xss-result-heading {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: 10px;
   margin-bottom: 14px;
 }
 
-.result-heading h3 {
+.xss-result-heading h3 {
   margin: 0;
-  color: var(--text);
+  color: var(--text-heading);
   font-size: 1rem;
-  font-weight: 700;
 }
 
-.result-number {
+.xss-result-badge {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-
-  width: 28px;
-  height: 28px;
-
-  border-radius: 50%;
-  background: #e2e8f0;
-
-  color: #475569;
-  font-size: 0.8rem;
-  font-weight: 700;
-}
-
-/* ---------------------------------------------------------
-   Result labels
-   --------------------------------------------------------- */
-
-.result-label {
-  display: inline-flex;
-  align-items: center;
-
-  margin-bottom: 10px;
-  padding: 5px 9px;
-
+  min-height: 28px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
   border-radius: 999px;
-
-  background: #fef2f2;
-  color: #b91c1c;
-
+  background: #f8fafc;
+  color: var(--text-muted);
   font-size: 0.78rem;
   font-weight: 700;
 }
 
-.safe-label {
-  background: #ecfdf5;
-  color: #047857;
+.xss-result-badge.is-running {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  color: #1d4ed8;
 }
 
-/* ---------------------------------------------------------
-   Simulation messages
-   --------------------------------------------------------- */
-
-.simulation-warning,
-.simulation-success {
-  margin: 12px 0 0;
-  padding: 10px 12px;
-
-  border-radius: var(--radius-md);
-
-  font-size: 0.88rem;
-  line-height: 1.5;
-}
-
-.simulation-warning {
-  border: 1px solid #fecaca;
-  background: #fef2f2;
+.xss-result-badge.is-danger {
+  border-color: #fecaca;
+  background: #fff7f7;
   color: #991b1b;
 }
 
-.simulation-success {
-  border: 1px solid #bbf7d0;
+.xss-result-badge.is-safe {
+  border-color: #bbf7d0;
   background: #f0fdf4;
   color: #166534;
 }
 
-/* ---------------------------------------------------------
-   Security notes
-   --------------------------------------------------------- */
-
-.xss-content .security-notes {
-  margin-top: 4px;
+#xssAttackFrame {
+  display: block;
+  width: 100%;
+  min-height: 270px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: #fff;
 }
 
-.xss-content .security-notes h3 {
-  margin-bottom: 10px;
+#xssAttackFrame[hidden] {
+  display: none;
 }
 
-.xss-content .security-notes li {
-  line-height: 1.65;
+.xss-defense-output {
+  display: grid;
+  gap: 12px;
 }
 
-/* ---------------------------------------------------------
-   Responsive
-   --------------------------------------------------------- */
+.xss-defense-output[hidden],
+.xss-empty-state[hidden] {
+  display: none;
+}
 
-@media (max-width: 900px) {
-  .lab-layout {
+.xss-safe-store {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: #fff;
+}
+
+.xss-safe-store-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  background: #f8fafc;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 650;
+}
+
+.xss-safe-store-content {
+  padding: 16px;
+}
+
+.xss-safe-store-content h4 {
+  margin: 6px 0;
+  color: var(--text-heading);
+}
+
+.xss-safe-store-kicker {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 750;
+  letter-spacing: 0.05em;
+}
+
+.xss-safe-store-state,
+.xss-safe-store-price {
+  display: block;
+  margin: 8px 0;
+}
+
+.xss-safe-store-state {
+  color: var(--text-muted);
+  font-size: 0.84rem;
+}
+
+.xss-safe-store-price {
+  color: var(--text-heading);
+}
+
+.xss-safe-review {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 0.84rem;
+}
+
+.xss-safe-comment {
+  margin: 8px 0 0;
+  padding: 9px;
+  overflow-wrap: anywhere;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--text-main);
+  line-height: 1.6;
+}
+
+.xss-defense-message {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid #bbf7d0;
+  border-radius: var(--radius-md);
+  background: #f0fdf4;
+  color: #166534;
+  line-height: 1.5;
+}
+
+.xss-empty-state {
+  display: grid;
+  min-height: 150px;
+  place-items: center;
+  padding: 18px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.xss-references {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.xss-references a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media (max-width: 760px) {
+  .xss-guide-grid,
+  .xss-guide-grid-bottom,
+  .xss-control-grid {
     grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 600px) {
-  .xss-intro {
-    padding: 15px;
-  }
-
-  .xss-form textarea {
-    min-height: 100px;
-  }
-
-  .result-heading {
-    align-items: flex-start;
   }
 }

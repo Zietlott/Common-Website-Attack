@@ -1,6 +1,6 @@
 # Common Website Attacks and Countermeasures
 
-Dự án học tập về các lỗ hổng bảo mật website phổ biến và biện pháp phòng chống. Ứng dụng có backend Node.js/Express, cơ sở dữ liệu SQLite và giao diện frontend; các bài thực hành SQL Injection (SQLi) và Cross-Site Request Forgery (CSRF) chỉ dùng trong môi trường phát triển local với dữ liệu giả lập.
+Dự án học tập về các lỗ hổng bảo mật website phổ biến và biện pháp phòng chống. Ứng dụng có backend Node.js/Express, cơ sở dữ liệu SQLite và giao diện frontend; các bài thực hành dùng dữ liệu giả local. XSS theo luồng bình luận có xác thực và CSRF token, SQLi secure dùng truy vấn tham số hóa, CSRF lab so sánh kiểm tra token; phishing chỉ mô phỏng nhận diện và cách phản ứng, không thu thập thông tin.
 
 ## Cấu trúc dự án
 
@@ -91,7 +91,7 @@ Có thể dùng `npm start` để khởi động mà không tự đặt `NODE_EN
 
 ## 4. Chạy frontend
 
-Mở giao diện trong thư mục `frontend/` bằng cách chạy frontend trên máy local (ví dụ dùng Live Server tại `http://localhost:5500`). Đảm bảo origin frontend khớp `FRONTEND_ORIGIN` trong `backend/.env`. Backend chấp nhận alias loopback `localhost`/`127.0.0.1` trên cùng cổng đã cấu hình. Đối với API dùng session cookie, `fetch` cần `credentials: "include"`; nên dùng hostname nhất quán giữa frontend và backend.
+Mở `frontend/index.html` bằng Live Server để chạy giao diện local (ví dụ tại `http://localhost:5500/frontend/` nếu mở server từ thư mục gốc repo, hoặc `http://localhost:5500/` nếu mở server trực tiếp từ thư mục `frontend`). Session database được lưu ngoài workspace theo mặc định để thao tác phiên không làm Live Server tự tải lại trang; có thể đặt `SESSION_DB_PATH` trong `backend/.env` nếu muốn chọn vị trí khác. Đảm bảo origin frontend khớp `FRONTEND_ORIGIN` trong `backend/.env`. Backend chấp nhận alias loopback `localhost`/`127.0.0.1` trên cùng cổng đã cấu hình. Đối với API dùng session cookie, `fetch` cần `credentials: "include"`; nên dùng hostname nhất quán giữa frontend và backend.
 
 ## 5. Bật các bài thực hành bảo mật (chỉ local)
 
@@ -121,7 +121,7 @@ Khởi động lại backend sau khi đổi `.env`. Các route `/api/labs/sqli/*
 | GET | `/api/users?page=1&limit=10` | Danh sách user đã lược bỏ email/password; yêu cầu đăng nhập |
 | GET | `/api/users/:id` | Xem hồ sơ của chính tài khoản đã đăng nhập |
 | GET | `/api/comments?page=1&limit=10` | Danh sách bình luận có phân trang |
-| POST | `/api/comments` | Tạo bình luận; yêu cầu đăng nhập, lấy `user_id` từ session |
+| POST | `/api/comments` | Tạo bình luận; yêu cầu đăng nhập, CSRF token và lấy `user_id` từ session |
 | POST | `/api/labs/sqli/vulnerable` | Minh họa truy vấn SQLi cố ý không an toàn (lab local) |
 | POST | `/api/labs/sqli/secure` | Minh họa truy vấn tham số hóa (lab local) |
 | POST | `/api/labs/csrf/start` | Tạo phiên và CSRF token demo (lab local) |
@@ -151,6 +151,8 @@ Script test tạo lại database và session **dành riêng cho test**, sau đó
 
 - Không dùng tài khoản, mật khẩu hay dữ liệu cá nhân thật trong các lab.
 - Không bật `ENABLE_SECURITY_LABS=true` trên hệ thống public/production.
+- Frontend local đặt CSP bằng meta policy; môi trường production nên cấu hình CSP qua response header tại web server/static host và bổ sung `frame-ancestors`.
 - Không commit `.env`, session cookies, khóa bí mật hoặc database nhạy cảm.
 - Khi hiển thị bình luận hoặc dữ liệu không tin cậy, dùng `textContent` hoặc cơ chế render được kiểm soát; không chèn trực tiếp vào `innerHTML`.
+- Tài khoản và bình luận mẫu chỉ dùng local. API tạo bình luận yêu cầu session cùng header `X-CSRF-Token` nhận từ response đăng nhập.
 - CORS không thay thế cơ chế chống CSRF. Cookie session được cấu hình `HttpOnly` và `SameSite=Lax` cho môi trường demo local.
