@@ -5,7 +5,7 @@
     <!-- CSP hashes allow only this lab script and its fixed harmless payload. -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'none'; base-uri 'none'; object-src 'none'; script-src 'sha256-WUQdm5rJuh88lDjv4WT33NkSEONK9XweQGdXzoCfMmk=' 'unsafe-hashes' 'sha256-ohFhmqB0kFvPvyA586wMQs+/E9Ehe3wl33qAQIEVc+Q='; style-src 'unsafe-inline'; img-src data:; media-src 'none'; connect-src 'none'; frame-src 'none'; form-action 'none'"
+      content="default-src 'none'; base-uri 'none'; object-src 'none'; script-src 'sha256-CwVurUmj+FCavRtEhiqZ8mnUTy2aAXBWjNxsQvi915I=' 'unsafe-hashes' 'sha256-JbfoJDxq72yPhfAcSMjho1bf+ZFGyZZhMoUouxKSnDc='; style-src 'unsafe-inline'; img-src data:; media-src 'none'; connect-src 'none'; frame-src 'none'; form-action 'none'"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ShopViet — trang sản phẩm giả lập</title>
@@ -96,11 +96,60 @@
         display: grid;
         min-height: 190px;
         place-items: center;
+        align-content: center;
+        gap: 12px;
         border: 1px solid #e2e8f0;
         border-radius: 10px;
+        background: linear-gradient(145deg, #f8fafc, #e0f2fe);
+      }
+
+      .blender {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .blender-lid {
+        width: 52px;
+        height: 9px;
+        border-radius: 5px 5px 2px 2px;
+        background: #334155;
+      }
+
+      .blender-jar {
+        width: 60px;
+        height: 65px;
+        border: 3px solid #0e7490;
+        border-top: 0;
+        border-radius: 4px 4px 14px 14px;
+        background: linear-gradient(180deg, #bae6fd 0 35%, #f0f9ff 36% 100%);
+      }
+
+      .blender-base {
+        display: grid;
+        width: 76px;
+        height: 42px;
+        margin-top: 3px;
+        place-items: center;
+        border: 2px solid #155e75;
+        border-radius: 8px 8px 15px 15px;
+        background: linear-gradient(135deg, #0891b2, #155e75);
+      }
+
+      .blender-button {
+        width: 12px;
+        height: 12px;
+        border: 2px solid #cffafe;
+        border-radius: 50%;
         background: #f8fafc;
-        color: #94a3b8;
-        font-size: 3rem;
+      }
+
+      .product-image-caption {
+        color: #64748b;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
       }
 
       .product-category {
@@ -141,21 +190,6 @@
         font-weight: 700;
       }
 
-      .attack-offer {
-        margin-top: 12px;
-        padding: 11px 12px;
-        border: 1px solid #fed7aa;
-        border-radius: 8px;
-        background: #fffaf3;
-        color: #7c2d12;
-        font-size: 0.84rem;
-        line-height: 1.5;
-      }
-
-      .attack-offer[hidden] {
-        display: none;
-      }
-
       .reviews,
       .search-result,
       .dom-result {
@@ -192,6 +226,50 @@
         line-height: 1.5;
       }
 
+      .injected-xss-effect {
+        display: grid;
+        gap: 7px;
+        margin-top: 9px;
+        padding: 10px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        background: #f8fafc;
+        color: #334155;
+        font-size: 0.84rem;
+        line-height: 1.5;
+      }
+
+      .injected-xss-effect.is-reflected {
+        border-color: #fbbf24;
+        background: #fffbeb;
+        color: #78350f;
+      }
+
+      .injected-xss-effect.is-stored {
+        border-color: #93c5fd;
+        background: #eff6ff;
+        color: #1e3a8a;
+      }
+
+      .injected-xss-effect.is-dom {
+        border-color: #c4b5fd;
+        background: #f5f3ff;
+        color: #4c1d95;
+      }
+
+      .injected-xss-effect button {
+        width: fit-content;
+        min-height: 32px;
+        padding: 6px 10px;
+        border: 0;
+        border-radius: 5px;
+        background: #0e7490;
+        color: #fff;
+        font: inherit;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+
       .query-label {
         color: #64748b;
         font-size: 0.78rem;
@@ -201,6 +279,43 @@
         margin: 14px 0 0;
         color: #64748b;
         font-size: 0.75rem;
+      }
+
+      .sandbox-status.attack-confirmed {
+        padding: 11px 13px;
+        border: 2px solid #dc2626;
+        border-radius: 8px;
+        background: #fef2f2;
+        color: #991b1b;
+        font-size: 0.88rem;
+        line-height: 1.5;
+      }
+
+      .sandbox-status.defense-confirmed {
+        padding: 11px 13px;
+        border: 2px solid #16a34a;
+        border-radius: 8px;
+        background: #f0fdf4;
+        color: #166534;
+        font-size: 0.88rem;
+        line-height: 1.5;
+      }
+
+      .safe-payload-details {
+        margin-top: 8px;
+      }
+
+      .safe-payload-code {
+        display: block;
+        max-height: 180px;
+        margin-top: 8px;
+        padding: 8px;
+        overflow: auto;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        background: #f8fafc;
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
       }
 
       @media (max-width: 520px) {
@@ -236,34 +351,37 @@
       <section class="shop-content">
         <p class="breadcrumb">Trang chủ / Điện gia dụng / Máy xay</p>
         <article class="product">
-          <div class="product-image" aria-label="Ảnh sản phẩm minh họa">▧</div>
+          <div class="product-image" role="img" aria-label="Hình minh họa máy xay">
+            <div class="blender" aria-hidden="true">
+              <span class="blender-lid"></span>
+              <span class="blender-jar"></span>
+              <span class="blender-base"><span class="blender-button"></span></span>
+            </div>
+            <span class="product-image-caption">Máy xay đa năng</span>
+          </div>
           <div>
             <span class="product-category">ĐIỆN GIA DỤNG</span>
             <h1>Máy xay đa năng ShopViet</h1>
-            <p class="rating">★★★★★ · 128 đánh giá</p>
+            <p class="rating" id="rating">★★★★★ · 128 đánh giá</p>
             <p class="product-state" id="productState">Còn hàng · Giao dự kiến ngày mai</p>
-            <strong class="price">1.290.000 ₫</strong>
+            <strong class="price" id="price">1.290.000 ₫</strong>
             <button type="button" class="buy-button" disabled>Thêm vào giỏ</button>
-            <aside id="attackOffer" class="attack-offer" hidden>
-              Mã giảm giá 90% đã được áp dụng! Ưu đãi này chỉ là nội dung giả
-              của mô phỏng; không có giao dịch hay tài khoản thật.
-            </aside>
           </div>
         </article>
         <section id="searchResult" class="search-result" hidden>
           <h2>Kết quả tìm kiếm</h2>
-          <p class="query-label">Từ khóa:</p>
-          <p id="searchQuery" class="review-body"></p>
+          <p class="query-label">Từ khóa tìm kiếm: <span id="searchQuery"></span></p>
           <div id="searchSink"></div>
         </section>
         <section id="domResult" class="dom-result" hidden>
-          <h2>Thông tin link chia sẻ</h2>
+          <h2>Nội dung từ link chia sẻ</h2>
+          <p class="review-body">Thông tin sản phẩm được chia sẻ cho bạn:</p>
           <div id="domSink"></div>
         </section>
         <section id="reviews" class="reviews" hidden>
-          <h2>Đánh giá của khách hàng</h2>
+          <h2>Bình luận sản phẩm đã lưu</h2>
           <article class="review">
-            <span class="review-author">Khách hàng ShopViet</span>
+            <span class="review-author">Người mua hàng</span>
             <div id="reviewSink" class="review-body"></div>
           </article>
         </section>
@@ -276,14 +394,14 @@
     <script>
       (function () {
         const expectedPayload =
-          `<img src="data:image/png;base64,AAAA" onerror="document.getElementById('cartCount').textContent='1'; document.getElementById('attackOffer').hidden=false; document.getElementById('productState').textContent='Ưu đãi đã được áp dụng'; window.parent.postMessage({source:'xss-sandbox',state:'executed',type:new URLSearchParams(location.search).get('type'),run:new URLSearchParams(location.search).get('run')},'*')">`;
+          `<img src="data:image/png;base64,AAAA" width="0" height="0" alt="" onerror="var t=new URLSearchParams(location.search).get('type'),e=document.getElementById('injectedEffect'),s=document.getElementById('sandboxStatus');if(t==='reflected'){e.classList.add('is-reflected');document.getElementById('injectedEffectTitle').textContent='Cần xác minh đơn hàng #1042';document.getElementById('injectedEffectMessage').textContent='Để tiếp tục, vui lòng xác minh thông tin giao hàng.';document.getElementById('injectedEffectAction').hidden=false}else if(t==='stored'){e.classList.add('is-stored');document.getElementById('injectedEffectTitle').textContent='Đánh giá sản phẩm';document.getElementById('injectedEffectMessage').textContent='Sản phẩm rất tốt, hãy liên hệ hỗ trợ để xác minh bảo hành.';document.getElementById('rating').textContent='★★★★★ · 999 đánh giá'}else{e.classList.add('is-dom');document.getElementById('injectedEffectTitle').textContent='Thông tin từ link chia sẻ';document.getElementById('injectedEffectMessage').textContent='Giá sản phẩm trong trang đã bị thay đổi.';document.getElementById('price').textContent='0 ₫';document.getElementById('productState').textContent='Giá được cập nhật từ link chia sẻ'}s.textContent='XSS đã chạy: '+(t==='reflected'?'kết quả tìm kiếm hiển thị yêu cầu xác minh đơn hàng giả.':t==='stored'?'bình luận giả và lượt đánh giá bị sửa.':'giá sản phẩm bị sửa từ dữ liệu trong URL.');s.classList.add('attack-confirmed');setTimeout(function(){window.parent.postMessage({source:'xss-sandbox',state:'executed',type:t,run:new URLSearchParams(location.search).get('run'),height:document.body.scrollHeight},'*')},0)"><section id="injectedEffect" class="injected-xss-effect"><strong id="injectedEffectTitle">Thông tin trang</strong><span id="injectedEffectMessage">Nội dung không an toàn đang được hiển thị.</span><button id="injectedEffectAction" type="button" disabled hidden>Xem chi tiết đơn hàng</button></section>`;
         const status = document.getElementById("sandboxStatus");
         const parameters = new URLSearchParams(window.location.search);
         const type = parameters.get("type");
         const run = parameters.get("run");
+        const defense = parameters.get("defense");
         let payload = "";
         let sink;
-
         if (window.parent === window) {
           status.textContent = "Trang giả lập chỉ chạy bên trong lab XSS.";
           return;
@@ -292,11 +410,13 @@
         if (type === "reflected") {
           payload = new URLSearchParams(window.location.search).get("q") || "";
           document.getElementById("searchResult").hidden = false;
-          document.getElementById("searchQuery").textContent = payload;
+          document.getElementById("searchQuery").textContent = "Máy xay đa năng";
           sink = document.getElementById("searchSink");
         } else if (type === "stored") {
           payload = new URLSearchParams(window.location.search).get("comment") || "";
           document.getElementById("reviews").hidden = false;
+          document.querySelector(".review-author").textContent =
+            "Người đăng bình luận";
           sink = document.getElementById("reviewSink");
         } else if (type === "dom") {
           payload =
@@ -309,20 +429,72 @@
           !["reflected", "stored", "dom"].includes(type) ||
           !run ||
           !/^\d+$/.test(run) ||
+          (defense && !["validate", "encode", "sanitize"].includes(defense)) ||
           payload !== expectedPayload ||
           !sink
         ) {
-          status.textContent = "Không có payload mô phỏng hợp lệ trong URL.";
+          status.textContent =
+            "Payload không khớp với phiên bản lab hiện tại. Hãy tải lại trang XSS rồi chạy lại tình huống.";
+          return;
+        }
+
+        if (defense) {
+          const result = document.createElement("p");
+          result.className = "review-body";
+
+          if (defense === "validate") {
+            result.textContent =
+              type === "stored"
+                ? "Bình luận bị từ chối: trường này chỉ nhận văn bản, không nhận thẻ HTML."
+                : "Dữ liệu bị từ chối theo quy tắc đầu vào; payload không được đưa vào trang.";
+          } else if (defense === "encode") {
+            result.textContent =
+              "Payload được hiển thị an toàn như văn bản nên trình duyệt không thực thi.";
+            const details = document.createElement("details");
+            details.className = "safe-payload-details";
+            const summary = document.createElement("summary");
+            summary.textContent = "Xem payload đã mã hóa";
+            const code = document.createElement("code");
+            code.className = "safe-payload-code";
+            code.textContent = payload;
+            details.append(summary, code);
+            sink.append(details);
+          } else {
+            result.textContent =
+              "Allowlist đã loại bỏ thẻ img và thuộc tính onerror; phần văn bản an toàn còn lại không thực thi.";
+          }
+
+          sink.prepend(result);
+          status.textContent =
+            defense === "validate"
+              ? "Đã phòng thủ: dữ liệu đầu vào bị từ chối trước khi hiển thị."
+              : defense === "encode"
+                ? "Đã phòng thủ: đầu ra được mã hóa và chỉ hiển thị như văn bản."
+                : "Đã phòng thủ: sanitizer allowlist đã loại bỏ nội dung có thể thực thi.";
+          status.classList.add("defense-confirmed");
+          setTimeout(function () {
+            window.parent.postMessage(
+              {
+                source: "xss-sandbox",
+                state: "defended",
+                type,
+                defense,
+                run,
+                height: document.body.scrollHeight,
+              },
+              "*",
+            );
+          }, 0);
           return;
         }
 
         sink.innerHTML = payload;
         status.textContent =
           type === "reflected"
-            ? "Trang tìm kiếm đã phản chiếu dữ liệu từ request."
+            ? "Reflected XSS: dữ liệu từ link được đưa vào kết quả tìm kiếm."
             : type === "stored"
-              ? "Trang sản phẩm đã tải bình luận đã lưu."
-              : "JavaScript đã đọc fragment URL và cập nhật DOM.";
+              ? "Stored XSS: trang đã tải bình luận giả được lưu trong lab."
+              : "DOM-based XSS: JavaScript đã đọc fragment URL và cập nhật DOM.";
       })();
     </script>
   </body>

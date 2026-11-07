@@ -2,7 +2,6 @@ const xssForm = document.getElementById("xssForm");
 const attackType = document.getElementById("xssAttackType");
 const defenseType = document.getElementById("xssDefenseType");
 const attackFrame = document.getElementById("xssAttackFrame");
-const defenseOutput = document.getElementById("xssDefenseOutput");
 const emptyState = document.getElementById("xssEmptyState");
 const resultBadge = document.getElementById("xssResultBadge");
 const attackButton = document.getElementById("xssAttackBtn");
@@ -17,14 +16,13 @@ const storedDefenseKey = "web-security-lab.xss-stored-defense";
 let activeXssRunId = 0;
 
 const xssAttackPayload =
-  `<img src="data:image/png;base64,AAAA" onerror="document.getElementById('cartCount').textContent='1'; document.getElementById('attackOffer').hidden=false; document.getElementById('productState').textContent='Ưu đãi đã được áp dụng'; window.parent.postMessage({source:'xss-sandbox',state:'executed',type:new URLSearchParams(location.search).get('type'),run:new URLSearchParams(location.search).get('run')},'*')">`;
+  `<img src="data:image/png;base64,AAAA" width="0" height="0" alt="" onerror="var t=new URLSearchParams(location.search).get('type'),e=document.getElementById('injectedEffect'),s=document.getElementById('sandboxStatus');if(t==='reflected'){e.classList.add('is-reflected');document.getElementById('injectedEffectTitle').textContent='Cần xác minh đơn hàng #1042';document.getElementById('injectedEffectMessage').textContent='Để tiếp tục, vui lòng xác minh thông tin giao hàng.';document.getElementById('injectedEffectAction').hidden=false}else if(t==='stored'){e.classList.add('is-stored');document.getElementById('injectedEffectTitle').textContent='Đánh giá sản phẩm';document.getElementById('injectedEffectMessage').textContent='Sản phẩm rất tốt, hãy liên hệ hỗ trợ để xác minh bảo hành.';document.getElementById('rating').textContent='★★★★★ · 999 đánh giá'}else{e.classList.add('is-dom');document.getElementById('injectedEffectTitle').textContent='Thông tin từ link chia sẻ';document.getElementById('injectedEffectMessage').textContent='Giá sản phẩm trong trang đã bị thay đổi.';document.getElementById('price').textContent='0 ₫';document.getElementById('productState').textContent='Giá được cập nhật từ link chia sẻ'}s.textContent='XSS đã chạy: '+(t==='reflected'?'kết quả tìm kiếm hiển thị yêu cầu xác minh đơn hàng giả.':t==='stored'?'bình luận giả và lượt đánh giá bị sửa.':'giá sản phẩm bị sửa từ dữ liệu trong URL.');s.classList.add('attack-confirmed');setTimeout(function(){window.parent.postMessage({source:'xss-sandbox',state:'executed',type:t,run:new URLSearchParams(location.search).get('run'),height:document.body.scrollHeight},'*')},0)"><section id="injectedEffect" class="injected-xss-effect"><strong id="injectedEffectTitle">Thông tin trang</strong><span id="injectedEffectMessage">Nội dung không an toàn đang được hiển thị.</span><button id="injectedEffectAction" type="button" disabled hidden>Xem chi tiết đơn hàng</button></section>`;
 
 if (
   xssForm &&
   attackType &&
   defenseType &&
   attackFrame &&
-  defenseOutput &&
   emptyState &&
   resultBadge &&
   attackButton &&
@@ -66,8 +64,6 @@ if (
     activeXssRunId += 1;
     attackFrame.removeAttribute("src");
     attackFrame.hidden = true;
-    defenseOutput.replaceChildren();
-    defenseOutput.hidden = true;
     emptyState.hidden = false;
     emptyState.textContent = "Chạy mô phỏng để xem kết quả tại đây.";
     resultBadge.textContent = "Chưa chạy";
@@ -102,10 +98,13 @@ if (
     }
   });
 
-  function createSandboxUrl(type, runId) {
+  function createSandboxUrl(type, runId, defense = "") {
     const url = new URL("../pages/xss-sandbox.html", window.location.href);
     url.searchParams.set("type", type);
     url.searchParams.set("run", String(runId));
+    if (defense) {
+      url.searchParams.set("defense", defense);
+    }
 
     if (type === "stored") {
       url.searchParams.set("comment", xssAttackPayload);
@@ -140,8 +139,6 @@ if (
       }
       sessionStorage.removeItem(storedDefenseKey);
       activeXssRunId += 1;
-      defenseOutput.replaceChildren();
-      defenseOutput.hidden = true;
       emptyState.hidden = true;
       victimButton.hidden = true;
       attackFrame.hidden = false;
@@ -187,85 +184,22 @@ if (
     }
   }
 
-  function createFakeShop() {
-    const shop = document.createElement("article");
-    shop.className = "xss-safe-store";
-
-    const header = document.createElement("div");
-    header.className = "xss-safe-store-header";
-    const brand = document.createElement("span");
-    brand.textContent = "ShopViet";
-    const cart = document.createElement("span");
-    cart.append("Giỏ hàng ");
-    const cartCount = document.createElement("strong");
-    cartCount.textContent = "0";
-    cart.appendChild(cartCount);
-    header.append(brand, cart);
-
-    const product = document.createElement("div");
-    product.className = "xss-safe-store-content";
-
-    const eyebrow = document.createElement("span");
-    eyebrow.className = "xss-safe-store-kicker";
-    eyebrow.textContent = "ĐIỆN GIA DỤNG";
-
-    const title = document.createElement("h4");
-    title.textContent = "Máy xay đa năng ShopViet";
-
-    const stock = document.createElement("p");
-    stock.className = "xss-safe-store-state";
-    stock.textContent = "Còn hàng · Giao dự kiến ngày mai";
-
-    const price = document.createElement("strong");
-    price.className = "xss-safe-store-price";
-    price.textContent = "1.290.000 ₫";
-
-    const review = document.createElement("div");
-    review.className = "xss-safe-review";
-    const reviewer = document.createElement("strong");
-    reviewer.textContent = "Đánh giá gần đây";
-    const comment = document.createElement("p");
-    comment.className = "xss-safe-comment";
-
-    review.append(reviewer, comment);
-    product.append(eyebrow, title, stock, price, review);
-    shop.append(header, product);
-    return { shop, comment };
-  }
-
   function showDefenseResult() {
     const defense = defenseType.value;
-    const { shop, comment } = createFakeShop();
-    const result = document.createElement("p");
-    result.className = "xss-defense-message";
-
-    activeXssRunId += 1;
-    attackFrame.removeAttribute("src");
-    attackFrame.hidden = true;
-    defenseOutput.replaceChildren();
-    defenseOutput.hidden = false;
-    emptyState.hidden = true;
-
-    if (defense === "validate") {
-      result.textContent =
-        "Bình luận bị từ chối: trường này chỉ nhận văn bản, không nhận thẻ HTML.";
-      result.classList.add("is-safe");
-    } else if (defense === "encode") {
-      comment.textContent = xssAttackPayload;
-      result.textContent =
-        "Đầu ra được thêm bằng textContent: payload hiện như chữ, không chạy.";
-      result.classList.add("is-safe");
-    } else if (defense === "sanitize") {
-      comment.appendChild(createSafeXssPreview(xssAttackPayload));
-      result.textContent =
-        "Sanitizer allowlist không cho phép img/onerror nên không có mã chạy.";
-      result.classList.add("is-safe");
-    } else {
+    if (!["validate", "encode", "sanitize"].includes(defense)) {
       showMessage("Chọn một cách phòng thủ hợp lệ.");
       return;
     }
 
-    defenseOutput.append(shop, result);
+    hideMessage();
+    emptyState.hidden = true;
+    activeXssRunId += 1;
+    attackFrame.hidden = false;
+    attackFrame.src = createSandboxUrl(
+      attackType.value,
+      activeXssRunId,
+      defense,
+    ).href;
 
     try {
       if (attackType.value === "stored") {
@@ -278,17 +212,19 @@ if (
       }
     } catch (error) {
       showMessage(`Không thể lưu trạng thái phòng thủ: ${error.message}`);
+      attackFrame.removeAttribute("src");
+      attackFrame.hidden = true;
+      emptyState.hidden = false;
       return;
     }
 
     victimButton.hidden = true;
-    resultBadge.textContent = "Đã phòng thủ";
-    resultBadge.className = "xss-result-badge is-safe";
+    resultBadge.textContent = "Đang áp dụng phòng thủ";
+    resultBadge.className = "xss-result-badge is-running";
     setStatus(
-      `${defenseType.options[defenseType.selectedIndex].text}: giao diện cửa hàng và giỏ hàng không bị thay đổi.`,
+      `${defenseType.options[defenseType.selectedIndex].text}: đang hiển thị kết quả an toàn trong cùng cửa hàng giả lập.`,
       "is-safe",
     );
-    hideMessage();
   }
 
   xssForm.addEventListener("submit", handleAttackSubmit);
@@ -342,8 +278,50 @@ window.addEventListener("message", function (event) {
     event.origin !== "null" ||
     !event.data ||
     event.data.source !== "xss-sandbox" ||
+    Number(event.data.run) !== activeXssRunId
+  ) {
+    return;
+  }
+
+  if (
+    Number.isFinite(event.data.height) &&
+    event.data.height >= 300 &&
+    event.data.height <= 1198
+  ) {
+    attackFrame.style.height = `${Math.ceil(event.data.height) + 2}px`;
+  }
+
+  if (
+    event.data.state === "defended" &&
+    ["reflected", "stored", "dom"].includes(event.data.type) &&
+    ["validate", "encode", "sanitize"].includes(event.data.defense)
+  ) {
+    const resultBadge = document.getElementById("xssResultBadge");
+    const simulationStatus = document.getElementById("xssSimulationStatus");
+    const defenseLabels = {
+      validate: "Xác thực đầu vào",
+      encode: "Mã hóa đầu ra (textContent)",
+      sanitize: "Lọc HTML theo allowlist",
+    };
+    const scenarioResults = {
+      reflected: "kết quả tìm kiếm chỉ hiện nội dung an toàn",
+      stored: "bình luận không thể chạy mã khi được hiển thị",
+      dom: "dữ liệu trong URL không thể sửa nội dung trang",
+    };
+    if (resultBadge) {
+      resultBadge.textContent = "Đã phòng thủ";
+      resultBadge.className = "xss-result-badge is-safe";
+    }
+    if (simulationStatus) {
+      simulationStatus.textContent = `${defenseLabels[event.data.defense]}: ${scenarioResults[event.data.type]}. Cửa hàng giả giữ nguyên bố cục; chỉ nội dung ở điểm nhận dữ liệu thay đổi.`;
+      simulationStatus.classList.remove("is-danger");
+      simulationStatus.classList.add("is-safe");
+    }
+    return;
+  }
+
+  if (
     event.data.state !== "executed" ||
-    Number(event.data.run) !== activeXssRunId ||
     !["reflected", "stored", "dom"].includes(event.data.type)
   ) {
     return;
@@ -358,13 +336,13 @@ window.addEventListener("message", function (event) {
   if (simulationStatus) {
     const steps = {
       reflected:
-        "Nạn nhân mở link email → dữ liệu từ query được phản chiếu vào trang tìm kiếm. Payload đổi giỏ hàng giả và hiện khuyến mãi giả.",
+        "Nạn nhân mở link email → payload từ query chèn thông báo giả vào kết quả tìm kiếm.",
       stored:
-        "Bình luận đã lưu → khách khác mở trang sản phẩm → payload chạy khi bình luận được hiển thị. Giỏ hàng giả đổi và khuyến mãi giả xuất hiện.",
+        "Bình luận chứa payload đã lưu → khách khác mở trang → bình luận chạy và sửa lượt đánh giá hiển thị.",
       dom:
-        "Trang đọc dữ liệu từ URL fragment → đưa vào innerHTML → payload đổi giỏ hàng giả và hiện khuyến mãi giả.",
+        "JavaScript đọc fragment rồi đưa vào innerHTML → payload sửa giá hiển thị ngay trong trình duyệt.",
     };
-    simulationStatus.textContent = `${steps[event.data.type]} Không có dữ liệu hay yêu cầu nào rời khỏi lab.`;
+    simulationStatus.textContent = `${steps[event.data.type]} Chỉ giao diện giả lập thay đổi; không có dữ liệu hay yêu cầu nào rời khỏi lab.`;
     simulationStatus.classList.remove("is-safe");
     simulationStatus.classList.add("is-danger");
   }

@@ -186,20 +186,43 @@
 }
 
 .xss-payload {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
+  display: grid;
+  gap: 8px;
   padding: 12px 14px;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   background: #fff;
 }
 
+.xss-payload-details {
+  min-width: 0;
+}
+
+.xss-payload-details summary {
+  color: var(--primary);
+  cursor: pointer;
+  font-size: 0.84rem;
+  font-weight: 650;
+}
+
 .xss-payload code {
+  display: block;
+  max-height: 140px;
+  margin-top: 8px;
+  overflow: auto;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  background: #f8fafc;
   overflow-wrap: anywhere;
   color: var(--text-muted);
   font-size: 0.84rem;
+}
+
+.xss-payload-note {
+  margin: -8px 0 0;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  line-height: 1.55;
 }
 
 #xssVictimBtn[hidden] {
@@ -274,7 +297,8 @@
 #xssAttackFrame {
   display: block;
   width: 100%;
-  min-height: 270px;
+  height: 360px;
+  min-height: 360px;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   background: #fff;
@@ -284,92 +308,8 @@
   display: none;
 }
 
-.xss-defense-output {
-  display: grid;
-  gap: 12px;
-}
-
-.xss-defense-output[hidden],
 .xss-empty-state[hidden] {
   display: none;
-}
-
-.xss-safe-store {
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: #fff;
-}
-
-.xss-safe-store-header {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 14px;
-  border-bottom: 1px solid var(--border);
-  background: #f8fafc;
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  font-weight: 650;
-}
-
-.xss-safe-store-content {
-  padding: 16px;
-}
-
-.xss-safe-store-content h4 {
-  margin: 6px 0;
-  color: var(--text-heading);
-}
-
-.xss-safe-store-kicker {
-  color: var(--text-muted);
-  font-size: 0.7rem;
-  font-weight: 750;
-  letter-spacing: 0.05em;
-}
-
-.xss-safe-store-state,
-.xss-safe-store-price {
-  display: block;
-  margin: 8px 0;
-}
-
-.xss-safe-store-state {
-  color: var(--text-muted);
-  font-size: 0.84rem;
-}
-
-.xss-safe-store-price {
-  color: var(--text-heading);
-}
-
-.xss-safe-review {
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
-  font-size: 0.84rem;
-}
-
-.xss-safe-comment {
-  margin: 8px 0 0;
-  padding: 9px;
-  overflow-wrap: anywhere;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: #fff;
-  color: var(--text-main);
-  line-height: 1.6;
-}
-
-.xss-defense-message {
-  margin: 0;
-  padding: 10px 12px;
-  border: 1px solid #bbf7d0;
-  border-radius: var(--radius-md);
-  background: #f0fdf4;
-  color: #166534;
-  line-height: 1.5;
 }
 
 .xss-empty-state {

@@ -164,12 +164,15 @@
 
                   <article id="xssFlowStored" class="xss-flow-card" hidden>
                     <div class="xss-flow-appbar">
-                      <span>Đánh giá sản phẩm</span>
-                      <span>Khách hàng · vừa đăng</span>
+                      <span>Bình luận sản phẩm</span>
+                      <span>Dữ liệu chưa tin cậy</span>
                     </div>
                     <div class="xss-flow-content">
                       <strong>“Máy xay đa năng ShopViet”</strong>
-                      <p>Sản phẩm tốt, giao hàng nhanh.</p>
+                      <p>
+                        Kịch bản: bình luận có nội dung không an toàn được hiển
+                        thị khi khách mở trang sản phẩm.
+                      </p>
                     </div>
                     <p class="xss-flow-step">
                       1. Kẻ tấn công đăng bình luận chứa dữ liệu độc hại. 2.
@@ -194,9 +197,17 @@
                 </section>
 
                 <div class="xss-payload">
-                  <span>Payload mẫu trong lab</span>
-                  <code id="xssPayloadPreview"></code>
+                  <span>Mẫu nội dung đầu vào trong lab</span>
+                  <details class="xss-payload-details">
+                    <summary>Xem chuỗi payload</summary>
+                    <code id="xssPayloadPreview"></code>
+                  </details>
                 </div>
+                <p class="xss-payload-note">
+                  Ảnh kích hoạt được ẩn. Kết quả tùy tình huống: Reflected chèn
+                  thông báo giả vào kết quả tìm kiếm; Stored chèn bình luận và
+                  sửa lượt đánh giá; DOM-based sửa giá từ dữ liệu trong URL.
+                </p>
 
                 <div class="form-actions">
                   <button type="submit" id="xssAttackBtn" class="primary-btn">
@@ -245,7 +256,6 @@
                   referrerpolicy="same-origin"
                   hidden
                 ></iframe>
-                <div id="xssDefenseOutput" class="xss-defense-output" hidden></div>
                 <div id="xssEmptyState" class="xss-empty-state">
                   Chạy mô phỏng để xem kết quả tại đây.
                 </div>
@@ -272,7 +282,6 @@
     </div>
 
     <script src="../js/components.js"></script>
-    <script src="../js/xss-preview.js"></script>
     <script src="../js/xss.js"></script>
   </body>
 </html>
