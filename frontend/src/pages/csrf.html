@@ -46,11 +46,11 @@
                 </ol>
               </article>
               <article class="csrf-guide-card">
-                <h3>Vì sao SOP không đủ?</h3>
+                <h3>Vì sao cần xác minh yêu cầu?</h3>
                 <p>
-                  Same-Origin Policy thường chặn trang lạ đọc phản hồi, nhưng
-                  không ngăn mọi form gửi yêu cầu. Vì vậy, server cần xác minh
-                  người dùng thật sự khởi tạo thao tác.
+                  Cookie phiên có thể được gửi cùng request, nhưng điều đó
+                  không chứng minh người dùng chủ động thực hiện giao dịch.
+                  Server cần kiểm tra token trước khi thay đổi dữ liệu.
                 </p>
               </article>
               <article class="csrf-guide-card">

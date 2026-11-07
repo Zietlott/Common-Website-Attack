@@ -31,7 +31,7 @@
             <p>
               Kẻ tấn công gửi link hoặc bình luận độc hại đến website bạn tin
               tưởng. Nếu website đưa dữ liệu đó vào trang như mã, trình duyệt
-              có thể thực thi nó trong origin của website.
+              có thể thực thi nó ngay trên trang đó.
             </p>
           </header>
 
@@ -40,9 +40,8 @@
             <p>
               Cross-Site Scripting (XSS) xảy ra khi website nhận dữ liệu không
               đáng tin cậy rồi đưa vào trang như HTML/JavaScript thay vì hiển
-              thị an toàn như văn bản. Trình duyệt thực thi nội dung đó trong
-              origin của website bị lỗi. Vì vậy, XSS không “phá” Same-Origin
-              Policy; mã độc được trình duyệt xem như mã của chính website đó.
+              thị an toàn như văn bản. Trình duyệt xử lý nội dung đó như một
+              phần của trang web, khiến mã có thể chạy với quyền của website.
             </p>
 
             <section class="xss-guide-section" aria-labelledby="xssTypesTitle">
@@ -107,12 +106,6 @@
                     <strong>Nếu cần cho phép HTML:</strong> dùng sanitizer
                     đáng tin cậy với allowlist thẻ/thuộc tính tối thiểu; không
                     tự viết bộ lọc bằng cách xóa vài chuỗi.
-                  </li>
-                  <li>
-                    <strong>CSP và cookie an toàn:</strong> CSP giới hạn nguồn
-                    script để giảm tác động khi còn lỗi; <code>HttpOnly</code>,
-                    <code>Secure</code>, <code>SameSite</code> bảo vệ cookie
-                    nhưng không thay thế xử lý đầu ra an toàn.
                   </li>
                 </ul>
               </article>
@@ -259,8 +252,8 @@
               </section>
 
               <p class="simulation-safety-note">
-                Không dùng dữ liệu thật. Mã chỉ chạy trong iframe sandbox; không
-                có quyền truy cập origin, cookie hay mạng.
+                Mô phỏng XSS chỉ dùng dữ liệu giả trong iframe sandbox; không
+                truy cập tài khoản hay dữ liệu thật.
               </p>
 
               <nav class="xss-references" aria-label="Nguồn tham khảo XSS">

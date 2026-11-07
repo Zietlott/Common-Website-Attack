@@ -42,7 +42,7 @@ function renderCsrfResult(result) {
 function setCsrfButtonsDisabled() {
   const sessionMissing = !csrfToken;
   if (csrfStartBtn) csrfStartBtn.disabled = csrfActionInProgress;
-  if (csrfStateBtn) csrfStateBtn.disabled = csrfActionInProgress || sessionMissing;
+  if (csrfStateBtn) csrfStateBtn.disabled = csrfActionInProgress;
   if (csrfVulnerableBtn) {
     csrfVulnerableBtn.disabled = csrfActionInProgress || sessionMissing;
   }
@@ -179,7 +179,7 @@ async function simulateAttackerForm(endpoint) {
       sessionCookie: "Trình duyệt tự đính kèm theo phiên demo",
     },
     attackerCanReadResponse: false,
-    reason: "Same-Origin Policy không cho trang giả đọc phản hồi.",
+    reason: "Trang giả có thể gửi yêu cầu nhưng không thể đọc nội dung phản hồi.",
     balanceBefore: before.balance,
     balanceAfter: after.balance,
     stateChanged: wasChanged,
@@ -224,7 +224,32 @@ if (csrfStartBtn) {
 if (csrfStateBtn) {
   csrfStateBtn.addEventListener("click", function () {
     performCsrfAction(async function () {
-      const state = await apiRequest("/labs/csrf/state");
+      let state;
+      try {
+        state = await apiRequest("/labs/csrf/state");
+      } catch (error) {
+        if (error.message !== "Demo session required") {
+          throw error;
+        }
+
+        csrfToken = null;
+        if (csrfTokenState) {
+          csrfTokenState.textContent = "Chưa có phiên";
+          csrfTokenState.classList.remove("is-ready");
+        }
+        setCsrfButtonsDisabled();
+        renderCsrfResult({
+          success: false,
+          message: "Chưa có phiên demo để đọc.",
+        });
+        setCsrfStatus("Chưa có phiên demo. Hãy đăng nhập để bắt đầu.");
+        if (csrfDemoSummary) {
+          csrfDemoSummary.textContent =
+            "Chưa có dữ liệu phiên trên server. Bấm “Đăng nhập ngân hàng demo” để tạo phiên và số dư ban đầu.";
+        }
+        return;
+      }
+
       setSession(state);
       renderCsrfResult({
         success: true,

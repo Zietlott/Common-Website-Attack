@@ -17,270 +17,163 @@
 
   <body data-page="security-guide" data-title="Hướng dẫn bảo mật">
     <div class="app">
-      <!-- Sidebar -->
       <div id="sidebar-container"></div>
 
       <main class="main-content">
-        <!-- Header -->
         <div id="header-container"></div>
 
         <section class="content security-guide-content">
-          <!-- Page heading -->
           <div class="page-heading">
             <span class="eyebrow-blue">SECURITY KNOWLEDGE</span>
-
             <h1>Hướng dẫn bảo mật web</h1>
-
             <p>
-              Những nguyên tắc cơ bản giúp xây dựng và sử dụng ứng dụng web an
-              toàn hơn.
+              Các nguyên tắc chính để bảo vệ ứng dụng, tài khoản và dữ liệu khi
+              phát triển hoặc sử dụng website.
             </p>
           </div>
 
-          <!-- XSS -->
           <section class="lab-panel guide-section">
             <div class="guide-number">01</div>
-
             <div class="guide-content">
               <h2>Phòng chống XSS</h2>
-
               <ul>
                 <li>
-                  Mã hóa đầu ra theo đúng ngữ cảnh; ưu tiên API hiển thị văn bản
-                  như <code>textContent</code>.
+                  Mã hóa đầu ra theo đúng ngữ cảnh; ưu tiên
+                  <code>textContent</code> khi hiển thị văn bản.
                 </li>
                 <li>
-                  Không đưa dữ liệu không đáng tin cậy trực tiếp vào
-                  <code>innerHTML</code>; nếu cần HTML, dùng thư viện làm sạch
-                  đã được kiểm tra.
+                  Tránh đưa dữ liệu không tin cậy trực tiếp vào
+                  <code>innerHTML</code>. Nếu cần cho phép HTML, dùng sanitizer
+                  đáng tin cậy với allowlist tối thiểu.
                 </li>
                 <li>
-                  Dùng Content Security Policy (CSP) như một lớp phòng vệ bổ
-                  sung, không thay thế mã hóa đầu ra. Trang frontend hiện dùng
-                  CSP meta cho môi trường local; khi triển khai, đặt policy
-                  trong response header tại web server/static host.
+                  Xác thực đầu vào theo quy tắc nghiệp vụ; đây là lớp bổ sung,
+                  không thay thế mã hóa đầu ra.
                 </li>
               </ul>
             </div>
           </section>
 
-          <!-- SQL Injection -->
           <section class="lab-panel guide-section">
             <div class="guide-number">02</div>
-
             <div class="guide-content">
               <h2>Phòng chống SQL Injection</h2>
-
               <ul>
                 <li>
-                  Dùng prepared statements hoặc truy vấn tham số hóa; không nối
-                  dữ liệu người dùng vào câu SQL.
+                  Dùng prepared statement/truy vấn tham số hóa; không nối dữ
+                  liệu người dùng vào câu SQL.
                 </li>
                 <li>
-                  Kiểm tra dữ liệu theo định dạng mong đợi và dùng allowlist
-                  cho các phần truy vấn không thể tham số hóa.
+                  Dùng allowlist cho tên cột, thứ tự sắp xếp hoặc phần truy vấn
+                  không thể bind bằng placeholder.
                 </li>
                 <li>
-                  Cấp cho tài khoản cơ sở dữ liệu quyền tối thiểu cần thiết và
-                  không trả lỗi SQL chi tiết cho người dùng cuối.
+                  Cấp quyền database tối thiểu và không trả lỗi SQL chi tiết
+                  cho người dùng cuối.
                 </li>
               </ul>
             </div>
           </section>
 
-          <!-- CSRF -->
           <section class="lab-panel guide-section">
             <div class="guide-number">03</div>
-
             <div class="guide-content">
               <h2>Phòng chống CSRF</h2>
-
               <ul>
                 <li>
-                  Xác minh CSRF token ở phía máy chủ đối với các yêu cầu làm
-                  thay đổi trạng thái.
+                  Kiểm tra CSRF token ở phía server với mọi request thay đổi
+                  trạng thái; không dựa vào token do client tự xác nhận.
                 </li>
                 <li>
-                  Cấu hình cookie phiên với <code>SameSite</code> phù hợp; có
-                  thể kiểm tra <code>Origin</code> hoặc <code>Referer</code> như
-                  lớp bổ sung.
+                  Cấu hình cookie session <code>SameSite</code> phù hợp; kiểm tra
+                  <code>Origin</code>/<code>Referer</code> như lớp bổ sung.
                 </li>
                 <li>
-                  Không dùng yêu cầu GET để thay đổi dữ liệu; yêu cầu xác nhận
-                  bổ sung cho hành động nhạy cảm.
+                  Không thay đổi dữ liệu qua GET; yêu cầu xác nhận lại cho thao
+                  tác nhạy cảm.
                 </li>
               </ul>
             </div>
           </section>
 
-          <!-- Phishing -->
           <section class="lab-panel guide-section">
             <div class="guide-number">04</div>
-
             <div class="guide-content">
-              <h2>Phòng tránh Phishing</h2>
-
+              <h2>Phòng tránh phishing</h2>
               <ul>
                 <li>
-                  Kiểm tra chính xác tên miền và người gửi; cảnh giác với lời
-                  nhắn gây áp lực hoặc đòi cung cấp thông tin khẩn cấp.
+                  Kiểm tra đầy đủ tên miền và địa chỉ người gửi; cảnh giác với
+                  đe dọa, ưu đãi bất ngờ hoặc thúc ép hành động gấp.
                 </li>
                 <li>
-                  Tự mở ứng dụng hoặc website chính thức thay vì đăng nhập qua
-                  liên kết đáng ngờ.
+                  Tự mở ứng dụng hoặc gõ địa chỉ website chính thức thay vì
+                  đăng nhập qua link trong email/tin nhắn đáng ngờ.
                 </li>
                 <li>
-                  Không chia sẻ mật khẩu hoặc mã OTP; báo cáo và xác minh yêu
-                  cầu qua kênh liên hệ chính thức.
+                  Không chia sẻ mật khẩu hoặc OTP. Nếu lỡ cung cấp thông tin,
+                  đổi mật khẩu và thu hồi phiên qua kênh chính thức, đồng thời
+                  báo ngân hàng/dịch vụ liên quan.
                 </li>
               </ul>
             </div>
           </section>
 
-          <!-- Security headers and maintenance -->
           <section class="lab-panel guide-section">
             <div class="guide-number">05</div>
-
             <div class="guide-content">
-              <h2>Security headers và cấu hình an toàn</h2>
-
+              <h2>Security headers khi triển khai</h2>
               <ul>
                 <li>
-                  Cấu hình CSP phù hợp, <code>X-Content-Type-Options</code>,
-                  <code>Referrer-Policy</code> và chính sách
-                  <code>frame-ancestors</code> để bổ sung các lớp bảo vệ.
-                  Các trang frontend hiện có CSP meta cho môi trường local;
-                  khi triển khai cần cấu hình CSP dưới dạng response header ở
-                  máy chủ static. Meta policy không thay thế được
-                  <code>frame-ancestors</code>. CSP của Helmet backend vẫn tắt
-                  vì backend không phục vụ HTML frontend.
+                  Phục vụ trang qua HTTPS; cấu hình CSP phù hợp,
+                  <code>X-Content-Type-Options</code>,
+                  <code>Referrer-Policy</code> và
+                  <code>frame-ancestors</code> ở web server hoặc static host.
                 </li>
                 <li>
-                  Bảo vệ cookie phiên bằng các thuộc tính
-                  <code>HttpOnly</code>, <code>Secure</code> và
-                  <code>SameSite</code> phù hợp với môi trường triển khai.
+                  Các trang lab hiện dùng CSP meta cho môi trường local. Meta
+                  policy không thể thay thế response header cho mọi chỉ thị
+                  (ví dụ <code>frame-ancestors</code>).
                 </li>
                 <li>
-                  Cập nhật thư viện, giữ bí mật ngoài mã nguồn và tránh để lộ
-                  thông tin nhạy cảm trong lỗi hoặc log.
+                  Cấu hình riêng frontend và backend: backend API không phục vụ
+                  HTML; CSP của Helmet được tắt ở backend để tránh gửi policy
+                  không phù hợp cho response API.
                 </li>
               </ul>
             </div>
           </section>
 
-          <section class="lab-panel guide-section practical-map">
-            <div class="guide-number">LAB</div>
+          <section class="lab-panel guide-section">
+            <div class="guide-number">06</div>
             <div class="guide-content">
-              <h2>Trong project này, phần nào đang được bảo vệ thật?</h2>
+              <h2>Bảo trì và vận hành</h2>
               <ul>
                 <li>
-                  <strong>XSS:</strong> bình luận được lưu qua API local có
-                  xác thực và CSRF token. Khi đọc, giao diện dùng
-                  <code>textContent</code> hoặc renderer chỉ cho phép thẻ định
-                  dạng; không chạy mã trong bình luận.
+                  Cập nhật thư viện thường xuyên; rà soát advisory và kiểm thử
+                  sau khi nâng phiên bản.
                 </li>
                 <li>
-                  <strong>SQL Injection:</strong> chế độ secure thực sự dùng
-                  truy vấn tham số hóa và xác minh mật khẩu bằng bcrypt. Chế độ
-                  vulnerable chỉ bật trong backend development local để so
-                  sánh; không nhập payload hoặc dùng dữ liệu thật.
+                  Để secret ngoài mã nguồn, giới hạn quyền truy cập và thay mới
+                  ngay nếu nghi ngờ bị lộ.
                 </li>
                 <li>
-                  <strong>CSRF:</strong> API tạo bình luận yêu cầu session và
-                  token CSRF được kiểm tra ở backend. Lab CSRF riêng cho xem
-                  trực tiếp sự khác nhau giữa endpoint kiểm tra token và endpoint
-                  cố ý bỏ qua token; nó không tự tạo cuộc tấn công cross-site.
+                  Không trả stack trace, câu SQL hay thông tin nhạy cảm trong
+                  response lỗi; giới hạn dữ liệu nhạy cảm ghi vào log.
                 </li>
                 <li>
-                  <strong>Phishing:</strong> đây là bài thực hành nhận diện và
-                  chọn cách phản ứng. Tên miền <code>.example</code> là giả lập;
-                  không có liên kết ngoài hoặc biểu mẫu thu thập thông tin.
+                  Các biện pháp trong project là ví dụ học tập, không thay thế
+                  đánh giá bảo mật, cấu hình production và kiểm thử trước khi
+                  phát hành.
                 </li>
               </ul>
-              <p>
-                Các biện pháp trong project là ví dụ học tập, không thay thế
-                đánh giá bảo mật, cấu hình HTTPS, quản lý bí mật và kiểm thử
-                trước khi triển khai một ứng dụng production.
-              </p>
             </div>
-          </section>
-
-          <!-- Checklist -->
-          <section class="lab-panel checklist-panel">
-            <div class="checklist-heading">
-              <div>
-                <span class="checklist-label">SELF CHECK</span>
-
-                <h2>Checklist tự kiểm tra</h2>
-
-                <p>Đánh dấu những nội dung bạn đã hiểu hoặc đã kiểm tra.</p>
-              </div>
-
-              <div
-                id="checklistProgress"
-                class="checklist-progress"
-                aria-live="polite"
-              >
-                0/4
-              </div>
-            </div>
-
-            <div class="checklist">
-              <label class="checklist-item">
-                <input type="checkbox" class="security-check" />
-
-                <span>
-                  Tôi hiểu vì sao cần dùng truy vấn SQL tham số hóa.
-                </span>
-              </label>
-
-              <label class="checklist-item">
-                <input type="checkbox" class="security-check" />
-
-                <span>
-                  Tôi biết vì sao không nên đưa dữ liệu không tin cậy vào HTML
-                  trực tiếp.
-                </span>
-              </label>
-
-              <label class="checklist-item">
-                <input type="checkbox" class="security-check" />
-
-                <span>
-                  Tôi hiểu mục đích của CSRF token và thuộc tính cookie
-                  SameSite.
-                </span>
-              </label>
-
-              <label class="checklist-item">
-                <input type="checkbox" class="security-check" />
-
-                <span>
-                  Tôi có thể nhận diện một số dấu hiệu phổ biến của phishing.
-                </span>
-              </label>
-            </div>
-
-            <div
-              id="checklistMessage"
-              class="checklist-message"
-              aria-live="polite"
-            >
-              Hãy hoàn thành checklist để kiểm tra tiến độ.
-            </div>
-
-            <button type="button" id="resetChecklistBtn" class="secondary-btn">
-              Đặt lại checklist
-            </button>
           </section>
         </section>
 
-        <!-- Footer -->
         <div id="footer-container"></div>
       </main>
     </div>
 
     <script src="../js/components.js"></script>
-    <script src="../js/security-guide.js"></script>
   </body>
 </html>

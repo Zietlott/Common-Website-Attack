@@ -5,73 +5,79 @@
 .xss-guide {
   margin-top: 20px;
   background: #fff;
+  padding: 22px;
 }
 
 .xss-guide > h2 {
-  margin: 0 0 8px;
+  margin: 0 0 10px;
   color: var(--text-heading);
+  font-size: 1.15rem;
 }
 
 .xss-guide > p {
   margin: 0;
   color: var(--text-main);
+  font-size: 0.875rem;
   line-height: 1.65;
 }
 
 .xss-guide-section {
-  margin-top: 20px;
+  margin-top: 24px;
 }
 
 .xss-guide-section > h3 {
   margin: 0;
   color: var(--text-heading);
-  font-size: 1.05rem;
+  font-size: 1.15rem;
 }
 
 .xss-guide-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 10px;
-  margin-top: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 12px;
 }
 
 .xss-guide-grid-bottom {
-  margin-top: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 24px;
 }
 
 .xss-guide-card {
   min-width: 0;
-  padding: 15px;
+  padding: 18px;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   background: #fff;
 }
 
 .xss-guide-card h3 {
-  margin: 0 0 6px;
+  margin: 0 0 8px;
   color: var(--text-heading);
-  font-size: 0.98rem;
+  font-size: 1rem;
 }
 
 .xss-guide-card p,
 .xss-guide-card ul {
   margin: 0;
   color: var(--text-main);
-  line-height: 1.6;
+  font-size: 0.875rem;
+  line-height: 1.65;
 }
 
 .xss-guide-card ul {
   display: grid;
-  gap: 8px;
+  gap: 10px;
   padding-left: 19px;
 }
 
 .xss-guide-card li {
-  padding-left: 2px;
+  padding: 0 0 0 3px;
+  line-height: 1.65;
 }
 
 .xss-guide-card li + li {
-  padding-top: 8px;
+  padding-top: 10px;
   border-top: 1px solid var(--border);
 }
 
@@ -96,6 +102,10 @@
   flex-direction: column;
   gap: 7px;
   min-width: 0;
+}
+
+.xss-form .form-group[hidden] {
+  display: none;
 }
 
 .xss-form label,
@@ -392,5 +402,9 @@
   .xss-guide-grid-bottom,
   .xss-control-grid {
     grid-template-columns: 1fr;
+  }
+
+  .xss-guide {
+    padding: 18px;
   }
 }

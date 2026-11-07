@@ -7,41 +7,12 @@
   box-shadow: var(--shadow-sm);
 }
 
-.security-remediation,
 .csrf-guide {
   background: #fff;
 }
 
 .csrf-guide {
   margin-top: 16px;
-}
-
-.csrf-guide > summary {
-  color: var(--text-heading);
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 700;
-}
-
-.csrf-guide-content {
-  margin-top: 14px;
-  color: var(--text-main);
-  line-height: 1.65;
-}
-
-.csrf-guide-content > * + * {
-  margin-top: 10px;
-}
-
-.csrf-guide-content pre {
-  overflow-x: auto;
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: #fff;
-  color: var(--text-main);
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
 }
 
 .security-simulation-header {
