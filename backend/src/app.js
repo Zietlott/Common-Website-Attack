@@ -4,10 +4,6 @@ const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
 
-const userRoutes = require("./routes/user.routes");
-const commentRoutes = require("./routes/comment.routes");
-const authRoutes = require("./routes/auth.routes");
-
 if (
   process.env.NODE_ENV === "production" &&
   process.env.ENABLE_SECURITY_LABS === "true"
@@ -58,15 +54,6 @@ app.get("/api/health", (req, res) => {
     message: "Backend server is running",
   });
 });
-
-// Authentication API
-app.use("/api/auth", authRoutes);
-
-// User APIs
-app.use("/api/users", userRoutes);
-app.use("/api/comments", commentRoutes);
-
-
 
 // SQL Injection Lab
 if (

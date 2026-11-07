@@ -29,12 +29,7 @@ try {
     "SELECT COUNT(*) AS total FROM users"
   ).get();
 
-  const comments = db.prepare(
-    "SELECT COUNT(*) AS total FROM comments"
-  ).get();
-
   console.log("Users:", users.total);
-  console.log("Comments:", comments.total);
 
 } catch (error) {
   console.error("Database initialization failed:", error.message);
