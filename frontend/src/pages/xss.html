@@ -67,10 +67,10 @@
                 <article class="xss-guide-card">
                   <h3>DOM-based XSS</h3>
                   <p>
-                    JavaScript phía trình duyệt đọc nguồn dữ liệu như URL fragment
-                    hoặc query rồi đưa vào sink nguy hiểm như <code>innerHTML</code>.
-                    Lỗi nằm ở cách mã phía client cập nhật DOM; server có thể không
-                    hề phản chiếu payload trong HTML.
+                    Trang đọc dữ liệu từ URL fragment (phần sau dấu <code>#</code>)
+                    bằng JavaScript rồi đưa thẳng vào <code>innerHTML</code>.
+                    Trình duyệt phân tích chuỗi đó thành HTML ngay trên máy người
+                    mở link; fragment không được gửi lên server.
                   </p>
                 </article>
               </div>
@@ -132,14 +132,14 @@
                     <select id="xssAttackType">
                       <option value="reflected">Reflected — link tìm kiếm</option>
                       <option value="stored">Stored — bình luận đã lưu</option>
-                      <option value="dom">DOM-based — dữ liệu trong URL</option>
+                      <option value="dom">DOM-based — fragment URL (#...)</option>
                     </select>
                   </div>
                   <div class="form-group">
                     <label for="xssDefenseType">Cách phòng thủ để thử</label>
                     <select id="xssDefenseType">
                       <option value="validate">Xác thực đầu vào</option>
-                      <option value="encode">Mã hóa đầu ra (textContent)</option>
+                      <option value="encode">Hiển thị văn bản an toàn (textContent)</option>
                       <option value="sanitize">Lọc HTML theo allowlist</option>
                     </select>
                   </div>
@@ -186,12 +186,18 @@
                       <span>shopviet.example</span>
                     </div>
                     <div class="xss-flow-content">
-                      <strong>Sản phẩm được gửi cho bạn</strong>
-                      <p>Trang đọc dữ liệu trong URL rồi cập nhật nội dung bằng JavaScript.</p>
+                      <strong>Bạn nhận được một link sản phẩm</strong>
+                      <p>
+                        “Mình thấy chiếc máy xay này đang giảm giá, bạn xem thử nhé!”
+                      </p>
                     </div>
                     <p class="xss-flow-step">
-                      1. Kẻ tấn công gửi link có dữ liệu trong fragment. 2.
-                      JavaScript phía trình duyệt đưa dữ liệu vào DOM không an toàn.
+                      Khi người dùng mở link, JavaScript của cửa hàng đọc dữ liệu
+                      đính kèm sau dấu <code>#</code> trong URL. Nếu trang đưa dữ
+                      liệu đó vào <code>innerHTML</code>, trình duyệt có thể hiểu
+                      nó là HTML thay vì văn bản. Trong lab, nội dung giả làm giá
+                      sản phẩm đổi thành 0 ₫. Phần sau dấu <code>#</code> không
+                      được gửi lên server.
                     </p>
                   </article>
                 </section>
@@ -206,8 +212,33 @@
                 <p class="xss-payload-note">
                   Ảnh kích hoạt được ẩn. Kết quả tùy tình huống: Reflected chèn
                   thông báo giả vào kết quả tìm kiếm; Stored chèn bình luận và
-                  sửa lượt đánh giá; DOM-based sửa giá từ dữ liệu trong URL.
+                  sửa lượt đánh giá; DOM-based đọc message từ fragment sau dấu
+                  <code>#</code> rồi sửa giá trong trang.
                 </p>
+
+                <section class="xss-code-comparison" aria-labelledby="xssCodeTitle">
+                  <h3 id="xssCodeTitle">So sánh code: vì sao phòng thủ có tác dụng?</h3>
+                  <p>
+                    Dữ liệu đầu vào là không đáng tin cậy. Chọn cách phòng thủ
+                    phía trên để xem code dễ lỗi, code xử lý an toàn và tác dụng
+                    của nó trong sandbox.
+                  </p>
+                  <div class="xss-code-grid">
+                    <article class="xss-code-card is-unsafe">
+                      <h4 id="xssUnsafeTitle">Điểm nhận dữ liệu</h4>
+                      <pre><code id="xssUnsafeCode"></code></pre>
+                    </article>
+                    <article class="xss-code-card is-safe">
+                      <h4 id="xssSafeTitle">Cách phòng thủ</h4>
+                      <pre><code id="xssSafeCode"></code></pre>
+                    </article>
+                  </div>
+                  <p id="xssDefenseExplanation" class="xss-code-explanation" aria-live="polite"></p>
+                  <details id="xssSanitizerDetails" class="xss-sanitizer-details" hidden>
+                    <summary>Xem helper allowlist đang chạy trong lab</summary>
+                    <pre><code id="xssSanitizerCode"></code></pre>
+                  </details>
+                </section>
 
                 <div class="form-actions">
                   <button type="submit" id="xssAttackBtn" class="primary-btn">
@@ -265,14 +296,6 @@
                 Mô phỏng XSS chỉ dùng dữ liệu giả trong iframe sandbox; không
                 truy cập tài khoản hay dữ liệu thật.
               </p>
-
-              <nav class="xss-references" aria-label="Nguồn tham khảo XSS">
-                <span>Tham khảo:</span>
-                <a href="https://portswigger.net/web-security/cross-site-scripting/reflected" target="_blank" rel="noopener noreferrer">Reflected</a>
-                <a href="https://portswigger.net/web-security/cross-site-scripting/stored" target="_blank" rel="noopener noreferrer">Stored</a>
-                <a href="https://portswigger.net/web-security/cross-site-scripting/dom-based" target="_blank" rel="noopener noreferrer">DOM-based</a>
-                <a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">OWASP phòng thủ</a>
-              </nav>
             </div>
           </section>
         </section>

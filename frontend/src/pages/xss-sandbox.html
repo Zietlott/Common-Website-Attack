@@ -5,7 +5,7 @@
     <!-- CSP hashes allow only this lab script and its fixed harmless payload. -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'none'; base-uri 'none'; object-src 'none'; script-src 'sha256-CwVurUmj+FCavRtEhiqZ8mnUTy2aAXBWjNxsQvi915I=' 'unsafe-hashes' 'sha256-JbfoJDxq72yPhfAcSMjho1bf+ZFGyZZhMoUouxKSnDc='; style-src 'unsafe-inline'; img-src data:; media-src 'none'; connect-src 'none'; frame-src 'none'; form-action 'none'"
+      content="default-src 'none'; base-uri 'none'; object-src 'none'; script-src 'sha256-/ONSCrSa3GEScQvwFJkVhaIc5qksvSKk9jGOZIYpw3A=' 'unsafe-hashes' 'sha256-JbfoJDxq72yPhfAcSMjho1bf+ZFGyZZhMoUouxKSnDc='; style-src 'unsafe-inline'; img-src data:; media-src 'none'; frame-src 'none'; form-action 'none'"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ShopViet — trang sản phẩm giả lập</title>
@@ -395,7 +395,43 @@
       (function () {
         const expectedPayload =
           `<img src="data:image/png;base64,AAAA" width="0" height="0" alt="" onerror="var t=new URLSearchParams(location.search).get('type'),e=document.getElementById('injectedEffect'),s=document.getElementById('sandboxStatus');if(t==='reflected'){e.classList.add('is-reflected');document.getElementById('injectedEffectTitle').textContent='Cần xác minh đơn hàng #1042';document.getElementById('injectedEffectMessage').textContent='Để tiếp tục, vui lòng xác minh thông tin giao hàng.';document.getElementById('injectedEffectAction').hidden=false}else if(t==='stored'){e.classList.add('is-stored');document.getElementById('injectedEffectTitle').textContent='Đánh giá sản phẩm';document.getElementById('injectedEffectMessage').textContent='Sản phẩm rất tốt, hãy liên hệ hỗ trợ để xác minh bảo hành.';document.getElementById('rating').textContent='★★★★★ · 999 đánh giá'}else{e.classList.add('is-dom');document.getElementById('injectedEffectTitle').textContent='Thông tin từ link chia sẻ';document.getElementById('injectedEffectMessage').textContent='Giá sản phẩm trong trang đã bị thay đổi.';document.getElementById('price').textContent='0 ₫';document.getElementById('productState').textContent='Giá được cập nhật từ link chia sẻ'}s.textContent='XSS đã chạy: '+(t==='reflected'?'kết quả tìm kiếm hiển thị yêu cầu xác minh đơn hàng giả.':t==='stored'?'bình luận giả và lượt đánh giá bị sửa.':'giá sản phẩm bị sửa từ dữ liệu trong URL.');s.classList.add('attack-confirmed');setTimeout(function(){window.parent.postMessage({source:'xss-sandbox',state:'executed',type:t,run:new URLSearchParams(location.search).get('run'),height:document.body.scrollHeight},'*')},0)"><section id="injectedEffect" class="injected-xss-effect"><strong id="injectedEffectTitle">Thông tin trang</strong><span id="injectedEffectMessage">Nội dung không an toàn đang được hiển thị.</span><button id="injectedEffectAction" type="button" disabled hidden>Xem chi tiết đơn hàng</button></section>`;
-        const status = document.getElementById("sandboxStatus");
+        function sanitizeAllowlistedHtml(html) {
+          const parsed = new DOMParser().parseFromString(html, "text/html");
+          const allowedTags = new Set(["SECTION", "STRONG", "SPAN", "BUTTON"]);
+
+          function copyAllowedNode(node) {
+            if (node.nodeType === Node.TEXT_NODE) {
+              return document.createTextNode(node.textContent || "");
+            }
+            if (node.nodeType !== Node.ELEMENT_NODE || !allowedTags.has(node.tagName)) {
+              return null;
+            }
+
+            const clean = document.createElement(node.tagName.toLowerCase());
+            if (node.tagName === "SECTION") {
+              clean.className = "injected-xss-effect";
+            }
+            if (node.tagName === "BUTTON") {
+              clean.type = "button";
+              clean.disabled = true;
+              clean.hidden = true;
+            }
+            for (const child of node.childNodes) {
+              const safeChild = copyAllowedNode(child);
+              if (safeChild) clean.append(safeChild);
+            }
+            return clean;
+          }
+
+          const safe = document.createDocumentFragment();
+          for (const node of parsed.body.childNodes) {
+            const clean = copyAllowedNode(node);
+            if (clean) safe.append(clean);
+          }
+          return safe;
+        }
+
+          const status = document.getElementById("sandboxStatus");
         const parameters = new URLSearchParams(window.location.search);
         const type = parameters.get("type");
         const run = parameters.get("run");
@@ -439,38 +475,27 @@
         }
 
         if (defense) {
-          const result = document.createElement("p");
-          result.className = "review-body";
-
           if (defense === "validate") {
-            result.textContent =
-              type === "stored"
-                ? "Bình luận bị từ chối: trường này chỉ nhận văn bản, không nhận thẻ HTML."
-                : "Dữ liệu bị từ chối theo quy tắc đầu vào; payload không được đưa vào trang.";
+            const hasMarkup = /<[a-z][\s\S]*>/i.test(payload);
+            sink.textContent = hasMarkup
+              ? "Bị từ chối: trường này chỉ nhận văn bản, không nhận markup."
+              : payload;
           } else if (defense === "encode") {
-            result.textContent =
-              "Payload được hiển thị an toàn như văn bản nên trình duyệt không thực thi.";
-            const details = document.createElement("details");
-            details.className = "safe-payload-details";
-            const summary = document.createElement("summary");
-            summary.textContent = "Xem payload đã mã hóa";
-            const code = document.createElement("code");
-            code.className = "safe-payload-code";
-            code.textContent = payload;
-            details.append(summary, code);
-            sink.append(details);
+            const output = document.createElement("code");
+            output.className = "safe-payload-code";
+            output.textContent = payload;
+            sink.replaceChildren(output);
           } else {
-            result.textContent =
-              "Allowlist đã loại bỏ thẻ img và thuộc tính onerror; phần văn bản an toàn còn lại không thực thi.";
+            const safeFragment = sanitizeAllowlistedHtml(payload);
+            sink.replaceChildren(safeFragment);
           }
 
-          sink.prepend(result);
           status.textContent =
             defense === "validate"
-              ? "Đã phòng thủ: dữ liệu đầu vào bị từ chối trước khi hiển thị."
+              ? "Đã phòng thủ: validator từ chối markup; dữ liệu không được diễn giải thành HTML."
               : defense === "encode"
-                ? "Đã phòng thủ: đầu ra được mã hóa và chỉ hiển thị như văn bản."
-                : "Đã phòng thủ: sanitizer allowlist đã loại bỏ nội dung có thể thực thi.";
+                ? "Đã phòng thủ: textContent hiển thị payload như văn bản; trình duyệt không tạo thẻ img."
+                : "Đã phòng thủ: helper allowlist chỉ dựng lại các thẻ cho phép; img và onerror bị loại.";
           status.classList.add("defense-confirmed");
           setTimeout(function () {
             window.parent.postMessage(

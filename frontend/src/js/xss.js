@@ -11,12 +11,55 @@ const defendBtn = document.getElementById("xssDefendBtn");
 const payloadPreview = document.getElementById("xssPayloadPreview");
 const xssMessage = document.getElementById("xssMessage");
 const simulationStatus = document.getElementById("xssSimulationStatus");
+const unsafeCode = document.getElementById("xssUnsafeCode");
+const safeCode = document.getElementById("xssSafeCode");
+const unsafeTitle = document.getElementById("xssUnsafeTitle");
+const safeTitle = document.getElementById("xssSafeTitle");
+const defenseExplanation = document.getElementById("xssDefenseExplanation");
+const sanitizerDetails = document.getElementById("xssSanitizerDetails");
+const sanitizerCode = document.getElementById("xssSanitizerCode");
 const storedPayloadKey = "web-security-lab.xss-stored-payload";
 const storedDefenseKey = "web-security-lab.xss-stored-defense";
 let activeXssRunId = 0;
 
 const xssAttackPayload =
   `<img src="data:image/png;base64,AAAA" width="0" height="0" alt="" onerror="var t=new URLSearchParams(location.search).get('type'),e=document.getElementById('injectedEffect'),s=document.getElementById('sandboxStatus');if(t==='reflected'){e.classList.add('is-reflected');document.getElementById('injectedEffectTitle').textContent='Cần xác minh đơn hàng #1042';document.getElementById('injectedEffectMessage').textContent='Để tiếp tục, vui lòng xác minh thông tin giao hàng.';document.getElementById('injectedEffectAction').hidden=false}else if(t==='stored'){e.classList.add('is-stored');document.getElementById('injectedEffectTitle').textContent='Đánh giá sản phẩm';document.getElementById('injectedEffectMessage').textContent='Sản phẩm rất tốt, hãy liên hệ hỗ trợ để xác minh bảo hành.';document.getElementById('rating').textContent='★★★★★ · 999 đánh giá'}else{e.classList.add('is-dom');document.getElementById('injectedEffectTitle').textContent='Thông tin từ link chia sẻ';document.getElementById('injectedEffectMessage').textContent='Giá sản phẩm trong trang đã bị thay đổi.';document.getElementById('price').textContent='0 ₫';document.getElementById('productState').textContent='Giá được cập nhật từ link chia sẻ'}s.textContent='XSS đã chạy: '+(t==='reflected'?'kết quả tìm kiếm hiển thị yêu cầu xác minh đơn hàng giả.':t==='stored'?'bình luận giả và lượt đánh giá bị sửa.':'giá sản phẩm bị sửa từ dữ liệu trong URL.');s.classList.add('attack-confirmed');setTimeout(function(){window.parent.postMessage({source:'xss-sandbox',state:'executed',type:t,run:new URLSearchParams(location.search).get('run'),height:document.body.scrollHeight},'*')},0)"><section id="injectedEffect" class="injected-xss-effect"><strong id="injectedEffectTitle">Thông tin trang</strong><span id="injectedEffectMessage">Nội dung không an toàn đang được hiển thị.</span><button id="injectedEffectAction" type="button" disabled hidden>Xem chi tiết đơn hàng</button></section>`;
+
+const sanitizerHelperCode = `function sanitizeAllowlistedHtml(html) {
+  const parsed = new DOMParser().parseFromString(html, "text/html");
+  const allowedTags = new Set(["SECTION", "STRONG", "SPAN", "BUTTON"]);
+
+  function copyAllowedNode(node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      return document.createTextNode(node.textContent || "");
+    }
+    if (node.nodeType !== Node.ELEMENT_NODE || !allowedTags.has(node.tagName)) {
+      return null;
+    }
+
+    const clean = document.createElement(node.tagName.toLowerCase());
+    if (node.tagName === "SECTION") {
+      clean.className = "injected-xss-effect";
+    }
+    if (node.tagName === "BUTTON") {
+      clean.type = "button";
+      clean.disabled = true;
+      clean.hidden = true;
+    }
+    for (const child of node.childNodes) {
+      const safeChild = copyAllowedNode(child);
+      if (safeChild) clean.append(safeChild);
+    }
+    return clean;
+  }
+
+  const safe = document.createDocumentFragment();
+  for (const node of parsed.body.childNodes) {
+    const clean = copyAllowedNode(node);
+    if (clean) safe.append(clean);
+  }
+  return safe;
+}`;
 
 if (
   xssForm &&
@@ -30,9 +73,68 @@ if (
   resetBtn &&
   defendBtn &&
   payloadPreview &&
-  simulationStatus
+  simulationStatus &&
+  unsafeCode &&
+  safeCode &&
+  unsafeTitle &&
+  safeTitle &&
+  defenseExplanation &&
+  sanitizerDetails &&
+  sanitizerCode
 ) {
   payloadPreview.textContent = xssAttackPayload;
+
+  function updateCodeComparison() {
+    const sources = {
+      reflected:
+        'const payload = new URLSearchParams(location.search).get("q") || "";',
+      stored:
+        'const payload = new URLSearchParams(location.search).get("comment") || "";',
+      dom:
+        'const payload = new URLSearchParams(location.hash.slice(1)).get("message") || "";',
+    };
+    const defenses = {
+      validate: {
+        title: "Xác thực đầu vào — từ chối markup",
+        code: `const hasMarkup = /<[a-z][\\s\\S]*>/i.test(payload);
+sink.textContent = hasMarkup
+  ? "Bị từ chối: trường này chỉ nhận văn bản, không nhận markup."
+  : payload;`,
+        explanation:
+          "Lab nhận diện chuỗi có markup (như <img>) và từ chối trước khi hiển thị. Phù hợp với trường chỉ nhận văn bản; đây là lớp bổ sung, không thay thế mã hóa đầu ra.",
+      },
+      encode: {
+        title: "Hiển thị văn bản an toàn — textContent",
+        code: `const output = document.createElement("code");
+output.textContent = payload;
+sink.replaceChildren(output);`,
+        explanation:
+          "textContent tạo nội dung văn bản, không phân tích chuỗi thành HTML. Vì vậy <img ...> hiện ra như chữ thay vì tạo thẻ img và chạy onerror.",
+      },
+      sanitize: {
+        title: "Sanitizer — allowlist thẻ",
+        code: `const safeFragment = sanitizeAllowlistedHtml(payload);
+sink.replaceChildren(safeFragment);`,
+        explanation:
+          "Helper trong lab chỉ dựng lại các thẻ SECTION, STRONG, SPAN, BUTTON và đặt thuộc tính cố định; IMG cùng onerror bị loại. Đây là demo allowlist nhỏ, không dùng thay sanitizer đã được kiểm chứng trong ứng dụng thật.",
+      },
+    };
+    const selected = defenses[defenseType.value];
+    if (!selected) {
+      return;
+    }
+
+    unsafeTitle.textContent =
+      attackType.value === "dom"
+        ? "DOM-based: nguồn → sink không an toàn"
+        : "Nguồn dữ liệu → sink không an toàn";
+    unsafeCode.textContent = `${sources[attackType.value]}\nsink.innerHTML = payload;`;
+    safeTitle.textContent = selected.title;
+    safeCode.textContent = selected.code;
+    defenseExplanation.textContent = selected.explanation;
+    sanitizerDetails.hidden = defenseType.value !== "sanitize";
+    sanitizerCode.textContent = sanitizerHelperCode;
+  }
 
   function setStatus(message, state = "") {
     simulationStatus.textContent = message;
@@ -84,6 +186,7 @@ if (
           : "Nạn nhân mở link email";
     victimButton.hidden = true;
     hideMessage();
+    updateCodeComparison();
   }
 
   attackType.addEventListener("change", function () {
@@ -97,6 +200,7 @@ if (
       showMessage(`Không thể đặt lại tình huống: ${error.message}`);
     }
   });
+  defenseType.addEventListener("change", updateCodeComparison);
 
   function createSandboxUrl(type, runId, defense = "") {
     const url = new URL("../pages/xss-sandbox.html", window.location.href);
@@ -300,7 +404,7 @@ window.addEventListener("message", function (event) {
     const simulationStatus = document.getElementById("xssSimulationStatus");
     const defenseLabels = {
       validate: "Xác thực đầu vào",
-      encode: "Mã hóa đầu ra (textContent)",
+      encode: "Hiển thị văn bản an toàn (textContent)",
       sanitize: "Lọc HTML theo allowlist",
     };
     const scenarioResults = {

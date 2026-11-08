@@ -299,18 +299,6 @@
   color: inherit;
 }
 
-.csrf-reference {
-  margin: 16px 0 0;
-  color: var(--text-muted);
-  font-size: 0.84rem;
-}
-
-.csrf-reference a {
-  color: var(--primary-dark);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
 @media (max-width: 900px) {
   .csrf-guide-grid {
     grid-template-columns: 1fr;
